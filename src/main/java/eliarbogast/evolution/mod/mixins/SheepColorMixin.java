@@ -38,6 +38,7 @@ public class SheepColorMixin  {
             for (int i=0; i<DyeColors.length; i++){
                 if(DyeColors[i].equals(current.getName())){
                     int newColor = i + randAdd;
+                    //out of bound
                     DyeColor tempColor = DyeColor.byName(DyeColors[newColor], current);
                     cir.setReturnValue(tempColor);
                 }

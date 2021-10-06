@@ -6,7 +6,9 @@
   "mixins": [
     "GrassReproduceMixin",
     "SheepColorMixin",
-    "StopDyeMixin"
+    "StopDyeMixin",
+    "SheepLifeCycleMixin",
+    "SheepEntityInvoker"
   ],
   "client": [
   ],
