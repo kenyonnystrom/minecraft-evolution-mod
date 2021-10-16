@@ -7,7 +7,6 @@ import java.util.stream.Stream;
 
 public class DyeUtils {
     public static final String[] DyeColors = {"brown", "red", "orange", "yellow", "lime", "green", "cyan", "light_blue", "blue", "purple", "magenta", "pink", "white", "light_gray", "gray", "black"};
-    Color color = new Color(8476209);
     /*
     MaterialColor has ID, we can put them in to the color Ring by these ids. It should have all 64 material types,
     for mock process, I only put 16.

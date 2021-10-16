@@ -80,7 +80,7 @@ public abstract class SheepLifeCycleMixin extends AnimalEntity implements SheepE
         }else{
             difference = Math.min(sheepColor - colorOfSurroundings, colorOfSurroundings + 15 - sheepColor);
         }//mutation amount
-        if(difference * (1+Math.random()) > 2){
+        if(difference * (1+Math.random()) > 10){
             this.onDeath(DamageSource.OUT_OF_WORLD);
         }
     }

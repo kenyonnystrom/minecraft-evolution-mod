@@ -28,17 +28,23 @@ public class SheepColorMixin  {
 
             double randDouble = Math.random();
             int randAdd;
-            if(randDouble > 0.5){
-                randAdd = 1;
+            if(randDouble > 0.3){ //change to 0.3
+                randAdd = 2;//add one to increase the mutation rate between generations
             }
             else{
-                randAdd = -1;
+                randAdd = -2;
             }
 
             for (int i=0; i<DyeColors.length; i++){
                 if(DyeColors[i].equals(current.getName())){
                     int newColor = i + randAdd;
-                    //out of bound
+                    //check out of bound
+                    if(newColor > 15){
+                        newColor = newColor - 15;
+                    }else if(newColor < 0){
+                        newColor += 15;
+                    }
+                    System.out.println("newColor: "+ newColor + " newColorName: " + DyeColors[newColor]);
                     DyeColor tempColor = DyeColor.byName(DyeColors[newColor], current);
                     cir.setReturnValue(tempColor);
                 }

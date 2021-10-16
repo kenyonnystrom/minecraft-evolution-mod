@@ -26,8 +26,9 @@ public abstract class GrassReproduceMixin extends AnimalEntity{
 
         GrassReproduceMixin passiveEntity = (GrassReproduceMixin) (Object) (this);
         this.grassCount++;
-        if(grassCount >= 2){
+        if(grassCount >= 1){
             if (!this.world.isClient) {
+                System.out.println("yes!!!! Creating Child");
                 setLoveTicks(600);
         }
         }
