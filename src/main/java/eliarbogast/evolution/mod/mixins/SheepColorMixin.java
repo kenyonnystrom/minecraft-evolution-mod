@@ -21,22 +21,25 @@ public class SheepColorMixin  {
         //dyeColor.byName which will give an object that can be set to the return value
         double mutDouble = Math.random();
         boolean mutate;
-
+        System.out.println("yes!! inside modifyChildColor!");
         //mutate rate
         mutate = mutDouble < 1.0;
         if (mutate) {
 
             double randDouble = Math.random();
-            int randAdd;
-            if(randDouble > 0.3){ //change to 0.3
-                randAdd = 2;//add one to increase the mutation rate between generations
+            int randAdd = 0;
+            if(randDouble > 0.5){ //change to 0.3
+                double rand = Math.random();
+                randAdd = (int)( 6 * Math.random());//add one to increase the mutation rate between generations
             }
             else{
-                randAdd = -2;
+                double rand = Math.random();
+                randAdd = (int)(-6 * Math.random());//add one to increase the mutation rate between generations
             }
-
+            System.out.println("randAdd = " + randAdd);
             for (int i=0; i<DyeColors.length; i++){
                 if(DyeColors[i].equals(current.getName())){
+                    System.out.println("oldColor: "+ i + " oldColorName: " + DyeColors[i]);
                     int newColor = i + randAdd;
                     //check out of bound
                     if(newColor > 15){
@@ -44,6 +47,7 @@ public class SheepColorMixin  {
                     }else if(newColor < 0){
                         newColor += 15;
                     }
+                    System.out.println("OldVersion succeed!!");
                     System.out.println("newColor: "+ newColor + " newColorName: " + DyeColors[newColor]);
                     DyeColor tempColor = DyeColor.byName(DyeColors[newColor], current);
                     cir.setReturnValue(tempColor);

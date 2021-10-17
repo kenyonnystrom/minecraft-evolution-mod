@@ -28,8 +28,9 @@ public abstract class GrassReproduceMixin extends AnimalEntity{
         this.grassCount++;
         if(grassCount >= 1){
             if (!this.world.isClient) {
-                System.out.println("yes!!!! Creating Child");
-                setLoveTicks(600);
+                System.out.println("yes!!!! Setting loveTick!");
+                //change setLoveTicks(600); -> setLoveTicks(6000)
+                setLoveTicks(60000);
         }
         }
     }

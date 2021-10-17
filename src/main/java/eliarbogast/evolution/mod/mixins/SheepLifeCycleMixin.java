@@ -51,9 +51,9 @@ public abstract class SheepLifeCycleMixin extends AnimalEntity implements SheepE
             for(Map.Entry<MaterialColor,Long> item:map.entrySet()){
                 if(item.getValue().intValue() > count){
                     key = item.getKey();
-                    System.out.println(key.id);
                 }
             }
+            System.out.println(key.id);
             return key;
         }
         return null;
@@ -61,27 +61,31 @@ public abstract class SheepLifeCycleMixin extends AnimalEntity implements SheepE
 
     public void killSheepBySurroundingColor(){
         System.out.println("on kill Sheep by surrounding color");
-        if(((SheepEntityExt)this) == null){
-            System.out.println("Sheep Entity Ext is null!");
-        }
-        if(((SheepEntityExt)this).getSurroundingColor() == null){
-            System.out.println("getSurroundingColor is null!");
-        }
         int colorOfSurroundings = colorRingOfMaterials.get(((SheepEntityExt)this).getSurroundingColor().id);//((SheepEntityExt)this).getSurroundingColor().color;
         System.out.println("((SheepEntityExt)this).getSurroundingColor().color: "+((SheepEntityExt)this).getSurroundingColor().id);
         System.out.println("on color of surroundings");
         int sheepColor = colorRingOfDyeColors.get(((SheepEntityInvoker)this).getSheepColor().name().toLowerCase());//((SheepEntityInvoker)this).getSheepColor().name()
         System.out.println("((SheepEntityInvoker)this).getSheepColor().name(): " + ((SheepEntityInvoker)this).getSheepColor().name());
-        System.out.println("on sheepColor");
-        int difference = 0;
-        /* compare the difference by the contrast of the sheep, max = 15 */
+        double difference = 0;
+        /* compare the difference by the contrast of the sheep, max = 8 */
         if(colorOfSurroundings > sheepColor){
             difference = Math.min(colorOfSurroundings - sheepColor, sheepColor + 15 - colorOfSurroundings);
         }else{
             difference = Math.min(sheepColor - colorOfSurroundings, colorOfSurroundings + 15 - sheepColor);
         }//mutation amount
-        if(difference * (1+Math.random()) > 10){
+        //4% to create child after eating grass.
+        //max contrast is 8
+        difference = isBaby() ? difference / 2: difference;
+        difference = difference < 2? (difference / 25):(difference / 12);
+        System.out.println("difference: " + difference);
+
+        if(Random(difference)){
+            System.out.println("dead shee color: " + ((SheepEntityInvoker)this).getSheepColor().name());
             this.onDeath(DamageSource.OUT_OF_WORLD);
         }
+    }
+    private Boolean Random(double d){
+        double rand = Math.random();
+        return rand <= d;
     }
 }
