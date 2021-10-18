@@ -25,7 +25,7 @@ public abstract class SheepLifeCycleMixin extends AnimalEntity implements SheepE
         super(entityType, world);
     }
 
-    @Inject(method="onEatingGrass", at = @At("HEAD"))
+    //@Inject(method="onEatingGrass", at = @At("HEAD"))
     public void onEatingGrass(CallbackInfo info) {
         System.out.println("onEatingGrass");
         ((SheepEntityExt)this).killSheepBySurroundingColor();
@@ -60,6 +60,18 @@ public abstract class SheepLifeCycleMixin extends AnimalEntity implements SheepE
     }
 
     public void killSheepBySurroundingColor(){
+        if(Random(getDifference())){
+            System.out.println("dead shee color: " + ((SheepEntityInvoker)this).getSheepColor().name());
+            this.onDeath(DamageSource.OUT_OF_WORLD);
+        }
+    }
+
+    private Boolean Random(double d){
+        double rand = Math.random();
+        return rand <= d;
+    }
+
+    public double getDifference(){
         System.out.println("on kill Sheep by surrounding color");
         int colorOfSurroundings = colorRingOfMaterials.get(((SheepEntityExt)this).getSurroundingColor().id);//((SheepEntityExt)this).getSurroundingColor().color;
         System.out.println("((SheepEntityExt)this).getSurroundingColor().color: "+((SheepEntityExt)this).getSurroundingColor().id);
@@ -78,14 +90,6 @@ public abstract class SheepLifeCycleMixin extends AnimalEntity implements SheepE
         difference = isBaby() ? difference / 2: difference;
         difference = difference < 2? (difference / 25):(difference / 12);
         System.out.println("difference: " + difference);
-
-        if(Random(difference)){
-            System.out.println("dead shee color: " + ((SheepEntityInvoker)this).getSheepColor().name());
-            this.onDeath(DamageSource.OUT_OF_WORLD);
-        }
-    }
-    private Boolean Random(double d){
-        double rand = Math.random();
-        return rand <= d;
+        return difference;
     }
 }
