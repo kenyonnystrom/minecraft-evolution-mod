@@ -53,7 +53,7 @@ public abstract class SheepLifeCycleMixin extends AnimalEntity implements SheepE
                     key = item.getKey();
                 }
             }
-            System.out.println(key.id);
+            //System.out.println(key.id);
             return key;
         }
         return null;
@@ -72,10 +72,10 @@ public abstract class SheepLifeCycleMixin extends AnimalEntity implements SheepE
     }
 
     public double getDifference(){
-        System.out.println("on kill Sheep by surrounding color");
+        //System.out.println("on kill Sheep by surrounding color");
         int colorOfSurroundings = colorRingOfMaterials.get(((SheepEntityExt)this).getSurroundingColor().id);//((SheepEntityExt)this).getSurroundingColor().color;
         System.out.println("((SheepEntityExt)this).getSurroundingColor().color: "+((SheepEntityExt)this).getSurroundingColor().id);
-        System.out.println("on color of surroundings");
+        //System.out.println("on color of surroundings");
         int sheepColor = colorRingOfDyeColors.get(((SheepEntityInvoker)this).getSheepColor().name().toLowerCase());//((SheepEntityInvoker)this).getSheepColor().name()
         System.out.println("((SheepEntityInvoker)this).getSheepColor().name(): " + ((SheepEntityInvoker)this).getSheepColor().name());
         double difference = 0;

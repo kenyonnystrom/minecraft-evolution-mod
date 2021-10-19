@@ -124,15 +124,7 @@ public class AttackSheepGoal extends Goal {
         if (squaredDistance <= d && this.field_24667 <= 0) {
             this.method_28346();
             this.mob.swingHand(Hand.MAIN_HAND);
-            if(target instanceof SheepEntity){
-                SheepEntityExt sheep = (SheepEntityExt)target;
-                double difference = sheep.getDifference();
-                if(Math.random() < difference){
-                    this.mob.tryAttack(target);
-                }else System.out.println("didn't attack" + ((SheepEntity)sheep).getColor().getName() + " sheep ");
-            }else{
-                this.mob.tryAttack(target);
-            }
+            this.mob.tryAttack(target);
         }
 
     }
