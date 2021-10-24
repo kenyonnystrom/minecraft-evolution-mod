@@ -1,4 +1,4 @@
-package eliarbogast.evolution.mod.mixins;
+package eliarbogast.evolution.mod;
 
 import eliarbogast.evolution.mod.SheepEntityExt;
 import net.minecraft.entity.Entity;
@@ -111,20 +111,36 @@ public class AttackSheepGoal extends Goal {
         this.field_24667 = Math.max(this.field_24667 - 1, 0);
         this.attack(livingEntity, d);
     }
-
+    /*
+    if the target is a sheep, then based on the difference between the color of its skin and the surrounding, we shrink the max attack distance and
+    reduce the wolf's successful attack sheep rate.
+     */
     protected void attack(LivingEntity target, double squaredDistance) {
+
         double d = this.getSquaredMaxAttackDistance(target);
+        double difference = 1;
         if(target instanceof SheepEntity){
             System.out.println("found an sheep entity");
             SheepEntityExt sheep = (SheepEntityExt)target;
-            double difference = sheep.getDifference();
-            d = d * difference * (12.0/8.0);
+            difference = sheep.getDifference() * 2; //difference can be 0 - 4/3
+            System.out.println("previous SquaredMaxAttackDistance is: " + d);
             System.out.println("getSquaredMaxAttackDistance is: " + d);
         }
         if (squaredDistance <= d && this.field_24667 <= 0) {
             this.method_28346();
             this.mob.swingHand(Hand.MAIN_HAND);
-            this.mob.tryAttack(target);
+            if(Math.random() <= difference) {
+                System.out.println("attacked the sheep.");
+                this.mob.tryAttack(target);
+                //change an attacking target.
+                this.mob.getNavigation().stop();
+                this.mob.setTarget(null);
+            }else {
+                //change an attacking target.
+                this.mob.getNavigation().stop();
+                this.mob.setTarget(null);
+                System.out.println("didn't attack sheep.");
+            }
         }
 
     }

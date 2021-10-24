@@ -9,7 +9,10 @@
     "StopDyeMixin",
     "SheepLifeCycleMixin",
     "SheepEntityInvoker",
-    "WolfAttackSheepGoalMixin"
+    "WolfAttackSheepGoalMixin",
+    "EscapeFromWolfMixin",
+    "AngerTimeMixin",
+    "AttackSheepAndBreedMixin"
   ],
   "client": [
   ],

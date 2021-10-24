@@ -15,15 +15,23 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(WolfEntity.class)
-public abstract class WolfAttackSheepGoalMixin extends AnimalEntity {
-
-    protected WolfAttackSheepGoalMixin(EntityType<? extends AnimalEntity> entityType, World world) {
+public abstract class AttackSheepAndBreedMixin extends AnimalEntity {
+    int killSheepCount = 0;
+    protected AttackSheepAndBreedMixin(EntityType<? extends AnimalEntity> entityType, World world) {
         super(entityType, world);
     }
 
-    @Inject(method="initGoals", at = @At("HEAD"))
-    public void initGoals(CallbackInfo info) {
-        System.out.println("initGoals");
-        this.goalSelector.add(4, new AttackSheepGoal(this, 1.0D, true));
+    @Inject(method="tryAttack", at = @At("TAIL"))
+    public void tryAttack(Entity target, CallbackInfo info) {
+        if(target instanceof SheepEntity){
+            SheepEntity sheep = (SheepEntity) target;
+            if(sheep.getHealth() < 1){
+                killSheepCount++;
+            }
+        }
+        if(killSheepCount > 2){
+            this.setLoveTicks(50);
+            this.canBreedWith(this);
+        }
     }
 }

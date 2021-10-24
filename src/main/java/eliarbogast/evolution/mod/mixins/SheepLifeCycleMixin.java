@@ -90,6 +90,7 @@ public abstract class SheepLifeCycleMixin extends AnimalEntity implements SheepE
         difference = isBaby() ? difference / 2: difference;
         difference = difference < 2? (difference / 25):(difference / 12);
         System.out.println("difference: " + difference);//adding comment here and readME.
+        //difference is between 0- 0.666
         return difference;
     }
 }

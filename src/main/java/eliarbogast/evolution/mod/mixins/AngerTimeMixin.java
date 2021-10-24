@@ -15,15 +15,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(WolfEntity.class)
-public abstract class WolfAttackSheepGoalMixin extends AnimalEntity {
+public abstract class AngerTimeMixin extends AnimalEntity {
 
-    protected WolfAttackSheepGoalMixin(EntityType<? extends AnimalEntity> entityType, World world) {
+    protected AngerTimeMixin(EntityType<? extends AnimalEntity> entityType, World world) {
         super(entityType, world);
     }
 
-    @Inject(method="initGoals", at = @At("HEAD"))
-    public void initGoals(CallbackInfo info) {
-        System.out.println("initGoals");
-        this.goalSelector.add(4, new AttackSheepGoal(this, 1.0D, true));
+    @Inject(method="setAngerTime", at = @At("HEAD"))
+    public void setAngerTime(int ticks, CallbackInfo info) {
+        System.out.println("angertime ticks: " + ticks);
+        ticks = ticks * 100;
     }
 }
