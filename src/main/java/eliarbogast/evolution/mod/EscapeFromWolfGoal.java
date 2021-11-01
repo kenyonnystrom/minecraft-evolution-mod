@@ -11,7 +11,13 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.BlockView;
 import org.jetbrains.annotations.Nullable;
-
+/*
+This class is copied from
+ */
+/**
+ * @author
+ * Silas Zhao
+ */
 public class EscapeFromWolfGoal extends Goal {
     protected final PathAwareEntity mob;
     protected final double speed;
@@ -25,7 +31,7 @@ public class EscapeFromWolfGoal extends Goal {
         this.speed = speed;
         this.setControls(EnumSet.of(Goal.Control.MOVE));
     }
-
+    //if encountered a wolf, then start this goal.
     public boolean canStart() {
         return this.mob.getAttacker() instanceof WolfEntity;
     }

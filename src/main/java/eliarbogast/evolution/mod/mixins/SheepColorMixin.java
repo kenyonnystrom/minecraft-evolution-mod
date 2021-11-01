@@ -8,7 +8,11 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import static eliarbogast.evolution.mod.utils.DyeUtils.DyeColors;
-
+/**
+ * @author
+ * eliarbogast
+ * Silas Zhao
+ */
 @Mixin(SheepEntity.class)
 public class SheepColorMixin  {
 
@@ -28,7 +32,7 @@ public class SheepColorMixin  {
 
             double randDouble = Math.random();
             int randAdd = 0;
-            if(randDouble > 0.5){ //change to 0.3
+            if(randDouble > 0.5){
                 double rand = Math.random();
                 randAdd = (int)( 6 * Math.random());//add one to increase the mutation rate between generations
             }
@@ -37,11 +41,12 @@ public class SheepColorMixin  {
                 randAdd = (int)(-6 * Math.random());//add one to increase the mutation rate between generations
             }
             System.out.println("randAdd = " + randAdd);
+
             for (int i=0; i<DyeColors.length; i++){
                 if(DyeColors[i].equals(current.getName())){
                     System.out.println("oldColor: "+ i + " oldColorName: " + DyeColors[i]);
                     int newColor = i + randAdd;
-                    //check out of bound
+                    //check the color ring
                     if(newColor > 15){
                         newColor = newColor - 15;
                     }else if(newColor < 0){

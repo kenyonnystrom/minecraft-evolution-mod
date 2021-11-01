@@ -12,7 +12,11 @@ import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.util.Hand;
 
 import java.util.EnumSet;
-
+/*
+This class is modified from MeleeAttack goal
+ * @author
+ * Silas Zhao
+ */
 public class AttackSheepGoal extends Goal {
     protected final PathAwareEntity mob;
     private final double speed;
@@ -119,6 +123,7 @@ public class AttackSheepGoal extends Goal {
 
         double d = this.getSquaredMaxAttackDistance(target);
         double difference = 1;
+        //this means the wolf encountered a sheep
         if(target instanceof SheepEntity){
             System.out.println("found an sheep entity");
             SheepEntityExt sheep = (SheepEntityExt)target;

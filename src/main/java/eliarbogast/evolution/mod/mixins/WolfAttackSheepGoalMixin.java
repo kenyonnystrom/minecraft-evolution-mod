@@ -13,7 +13,10 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
+/**
+ * @author
+ * Silas Zhao
+ */
 @Mixin(WolfEntity.class)
 public abstract class WolfAttackSheepGoalMixin extends AnimalEntity {
 
@@ -24,6 +27,7 @@ public abstract class WolfAttackSheepGoalMixin extends AnimalEntity {
     @Inject(method="initGoals", at = @At("HEAD"))
     public void initGoals(CallbackInfo info) {
         System.out.println("initGoals");
+        //lower number have more priority. I used 4 because I want to use this goal to replace MeleeAttackGoal when meeting a sheep.
         this.goalSelector.add(4, new AttackSheepGoal(this, 1.0D, true));
     }
 }

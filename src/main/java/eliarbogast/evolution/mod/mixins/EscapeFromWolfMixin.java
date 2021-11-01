@@ -12,7 +12,9 @@ package eliarbogast.evolution.mod.mixins;
         import org.spongepowered.asm.mixin.injection.At;
         import org.spongepowered.asm.mixin.injection.Inject;
         import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
+/**
+ * @author Silas Zhao
+ */
 @Mixin(SheepEntity.class)
 public abstract class EscapeFromWolfMixin extends AnimalEntity {
 
@@ -23,6 +25,7 @@ public abstract class EscapeFromWolfMixin extends AnimalEntity {
     @Inject(method="initGoals", at = @At("HEAD"))
     public void initGoals(CallbackInfo info) {
         System.out.println("init sheep Goals");
+        //lower number have more priority. So 0 represents the highest priority
         this.goalSelector.add(0, new EscapeFromWolfGoal(this, 1.7D));
 
     }

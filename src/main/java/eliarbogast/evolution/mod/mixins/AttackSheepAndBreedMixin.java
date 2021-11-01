@@ -13,7 +13,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
+/**
+ * @author Silas Zhao
+ */
 @Mixin(WolfEntity.class)
 public abstract class AttackSheepAndBreedMixin extends AnimalEntity {
     int killSheepCount = 0;
@@ -21,7 +23,7 @@ public abstract class AttackSheepAndBreedMixin extends AnimalEntity {
         super(entityType, world);
     }
 
-    @Inject(method="tryAttack", at = @At("TAIL"))
+    //@Inject(method="tryAttack", at = @At("TAIL"))
     public void tryAttack(Entity target, CallbackInfo info) {
         if(target instanceof SheepEntity){
             SheepEntity sheep = (SheepEntity) target;

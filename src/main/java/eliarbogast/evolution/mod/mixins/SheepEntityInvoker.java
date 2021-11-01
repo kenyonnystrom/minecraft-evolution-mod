@@ -7,6 +7,7 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 
 @Mixin(SheepEntity.class)
 public interface SheepEntityInvoker {
+    //invoker let you invoke the "getColor()" function in sheepEntity. More detail see the wiki page in readMe.
     @Invoker("getColor")
     DyeColor getSheepColor();
 }

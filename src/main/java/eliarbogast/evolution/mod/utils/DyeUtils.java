@@ -5,11 +5,17 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * @author
+ * eliarbogast
+ * Silas Zhao
+ */
 public class DyeUtils {
     public static final String[] DyeColors = {"brown", "red", "orange", "yellow", "lime", "green", "cyan", "light_blue", "blue", "purple", "magenta", "pink", "white", "light_gray", "gray", "black"};
     /*
     MaterialColor has ID, we can put them in to the color Ring by these ids. It should have all 64 material types,
     for mock process, I only put 16.
+    mapping each material color to one of the position in the color ring we created.
      */
     //<id, the corresponding position of colorRingOfDyeColors>
     public static final Map<Integer,Integer> colorRingOfMaterials = Stream.of(new Object[][]{
@@ -84,7 +90,7 @@ there are 16 colors for sheep. Put these colors into a color ring by its name.
 However, white and black are not in the color spectrum, and different color have different shades and hues,
 which are also playing rolls of recognizing colors.
  */
-
+    //this is the color ring!
     public static final Map<String,Integer> colorRingOfDyeColors = Stream.of(new Object[][]{
             {"white",0},
             {"orange",3},

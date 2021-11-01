@@ -19,6 +19,10 @@ import java.util.stream.Collectors;
 
 import static eliarbogast.evolution.mod.utils.DyeUtils.colorRingOfDyeColors;
 import static eliarbogast.evolution.mod.utils.DyeUtils.colorRingOfMaterials;
+/**
+ * @author
+ * Silas Zhao
+ */
 @Mixin(SheepEntity.class)
 public abstract class SheepLifeCycleMixin extends AnimalEntity implements SheepEntityExt,SheepEntityInvoker{
     public SheepLifeCycleMixin(EntityType<? extends SheepEntity> entityType, World world) {
@@ -30,11 +34,11 @@ public abstract class SheepLifeCycleMixin extends AnimalEntity implements SheepE
         System.out.println("onEatingGrass");
         ((SheepEntityExt)this).killSheepBySurroundingColor();
     }
-
+    //this function can return the most appeared surrounding color.
     public MaterialColor getSurroundingColor() {
         BlockPos blockPos = this.getBlockPos();
         List<MaterialColor> colorList = new ArrayList<>();
-        //search radius 5*5
+        //search radius 5*5, elements in colorList are the color of surrounding area (5 * 5)
         for(int i = -2; i < 3; i++){
             for(int j = -2; j < 3; j++){
                 Material material = this.world.getBlockState(blockPos.add(i,j,0)).getMaterial();
@@ -43,7 +47,7 @@ public abstract class SheepLifeCycleMixin extends AnimalEntity implements SheepE
                 }
             }
         }
-        //get the most frequent color.
+        //get the most frequent appeared surrounding color.
         if(colorList.size()!=0){
             Map<MaterialColor,Long> map = colorList.stream().collect(Collectors.groupingBy(materialColor -> materialColor, Collectors.counting()));
             MaterialColor key = null;
@@ -58,10 +62,11 @@ public abstract class SheepLifeCycleMixin extends AnimalEntity implements SheepE
         }
         return null;
     }
-
+    //this is the function that can kill sheep.
     public void killSheepBySurroundingColor(){
         if(Random(getDifference())){
             System.out.println("dead shee color: " + ((SheepEntityInvoker)this).getSheepColor().name());
+            //kill the sheep directly by calling onDeath
             this.onDeath(DamageSource.OUT_OF_WORLD);
         }
     }
@@ -70,24 +75,25 @@ public abstract class SheepLifeCycleMixin extends AnimalEntity implements SheepE
         double rand = Math.random();
         return rand <= d;
     }
-
+    //This function is to detect the difference between color of sheep skin and the surrounding color.
     public double getDifference(){
-        //System.out.println("on kill Sheep by surrounding color");
-        int colorOfSurroundings = colorRingOfMaterials.get(((SheepEntityExt)this).getSurroundingColor().id);//((SheepEntityExt)this).getSurroundingColor().color;
+        int colorOfSurroundings = colorRingOfMaterials.get(((SheepEntityExt)this).getSurroundingColor().id);
         System.out.println("((SheepEntityExt)this).getSurroundingColor().color: "+((SheepEntityExt)this).getSurroundingColor().id);
-        //System.out.println("on color of surroundings");
-        int sheepColor = colorRingOfDyeColors.get(((SheepEntityInvoker)this).getSheepColor().name().toLowerCase());//((SheepEntityInvoker)this).getSheepColor().name()
+        int sheepColor = colorRingOfDyeColors.get(((SheepEntityInvoker)this).getSheepColor().name().toLowerCase());
         System.out.println("((SheepEntityInvoker)this).getSheepColor().name(): " + ((SheepEntityInvoker)this).getSheepColor().name());
         double difference = 0;
         /* compare the difference by the contrast of the sheep, max = 8 */
+        //This is to use dyeColor as a color ring. more details in the readMe.txt
         if(colorOfSurroundings > sheepColor){
             difference = Math.min(colorOfSurroundings - sheepColor, sheepColor + 15 - colorOfSurroundings);
         }else{
             difference = Math.min(sheepColor - colorOfSurroundings, colorOfSurroundings + 15 - sheepColor);
         }//mutation amount
-        //4% to create child after eating grass.
+        //4% on average to create child after eating grass once.
         //max contrast is 8
+        //if it is baby, decrease the difference by one half
         difference = isBaby() ? difference / 2: difference;
+        //if the sheep has a similar color with its surrounding, namely difference < 2, decrease the difference by one half.
         difference = difference < 2? (difference / 25):(difference / 12);
         System.out.println("difference: " + difference);//adding comment here and readME.
         //difference is between 0- 0.666
