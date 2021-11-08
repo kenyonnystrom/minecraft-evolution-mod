@@ -5,6 +5,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.ai.pathing.Path;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.entity.passive.SheepEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -30,6 +31,7 @@ public class AttackSheepGoal extends Goal {
     private final int attackIntervalTicks = 20;
     private long lastUpdateTime;
 
+    private int failAttackCount = 0;
     public AttackSheepGoal(PathAwareEntity mob, double speed, boolean pauseWhenMobIdle) {
         this.mob = mob;
         this.speed = speed;
@@ -118,6 +120,7 @@ public class AttackSheepGoal extends Goal {
     /*
     if the target is a sheep, then based on the difference between the color of its skin and the surrounding, we shrink the max attack distance and
     reduce the wolf's successful attack sheep rate.
+    If a wolf failed to attack sheep for more than 10 times, it will be dead.
      */
     protected void attack(LivingEntity target, double squaredDistance) {
 
@@ -139,11 +142,15 @@ public class AttackSheepGoal extends Goal {
                 this.mob.tryAttack(target);
                 //change an attacking target.
                 this.mob.getNavigation().stop();
-                this.mob.setTarget(null);
             }else {
                 //change an attacking target.
                 this.mob.getNavigation().stop();
-                this.mob.setTarget(null);
+                failAttackCount++;
+                //if the amount of failure attacking is larger than 10, the wolf dead.
+                if(failAttackCount > 3){
+                    this.mob.onDeath(DamageSource.OUT_OF_WORLD);
+                    System.out.println("wolf dead.");
+                }
                 System.out.println("didn't attack sheep.");
             }
         }

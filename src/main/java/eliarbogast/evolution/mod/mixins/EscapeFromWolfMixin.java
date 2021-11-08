@@ -26,7 +26,7 @@ public abstract class EscapeFromWolfMixin extends AnimalEntity {
     public void initGoals(CallbackInfo info) {
         System.out.println("init sheep Goals");
         //lower number have more priority. So 0 represents the highest priority
-        this.goalSelector.add(0, new EscapeFromWolfGoal(this, 1.7D));
+        this.goalSelector.add(0, new EscapeFromWolfGoal(this, 2.5D));
 
     }
 }

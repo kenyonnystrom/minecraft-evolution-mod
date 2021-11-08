@@ -12,7 +12,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.BlockView;
 import org.jetbrains.annotations.Nullable;
 /*
-This class is copied from
+This class is modified from AvoidLlamaGoal
  */
 /**
  * @author

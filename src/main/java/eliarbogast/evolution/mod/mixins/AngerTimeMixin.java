@@ -21,9 +21,8 @@ public abstract class AngerTimeMixin extends AnimalEntity {
         super(entityType, world);
     }
 
-    @Inject(method="setAngerTime", at = @At("HEAD"))
+    //@Inject(method="setAngerTime", at = @At("HEAD"))
     public void setAngerTime(int ticks, CallbackInfo info) {
-        System.out.println("angertime ticks: " + ticks);
-        ticks = ticks * 100;
+        ticks = ticks /10;
     }
 }

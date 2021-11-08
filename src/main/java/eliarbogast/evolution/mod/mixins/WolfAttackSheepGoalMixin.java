@@ -25,6 +25,7 @@ public abstract class WolfAttackSheepGoalMixin extends AnimalEntity {
     }
 
     @Inject(method="initGoals", at = @At("HEAD"))
+    //InitGoal is a void function, so use CallbackInfo. More details in ReadMe Remark session.
     public void initGoals(CallbackInfo info) {
         System.out.println("initGoals");
         //lower number have more priority. I used 4 because I want to use this goal to replace MeleeAttackGoal when meeting a sheep.
