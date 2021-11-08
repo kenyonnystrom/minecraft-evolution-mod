@@ -4,11 +4,17 @@
   "package": "eliarbogast.evolution.mod.mixins",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "GrassReproduceMixin",
-    "SheepColorMixin",
-    "StopDyeMixin"
   ],
   "client": [
+    "GrassReproduceMixin",
+    "SheepColorMixin",
+    "StopDyeMixin",
+    "SheepLifeCycleMixin",
+    "SheepEntityInvoker",
+    "WolfAttackSheepGoalMixin",
+    "EscapeFromWolfMixin",
+    "AngerTimeMixin",
+    "AttackSheepAndBreedMixin"
   ],
   "injectors": {
     "defaultRequire": 1
