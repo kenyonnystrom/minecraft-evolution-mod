@@ -1,4 +1,4 @@
-package eliarbogast.evolution.mod.mixins;
+package evolution.mod.mixins;
 
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.passive.SheepEntity;
@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import static eliarbogast.evolution.mod.utils.DyeUtils.DyeColors;
+import static evolution.mod.utils.DyeUtils.DyeColors;
 /**
  * @author
  * eliarbogast
@@ -44,7 +44,7 @@ public class SheepColorMixin  {
 
             for (int i=0; i<DyeColors.length; i++){
                 if(DyeColors[i].equals(current.getName())){
-                    System.out.println("oldColor: "+ i + " oldColorName: " + DyeColors[i]);
+                    //System.out.println("oldColor: "+ i + " oldColorName: " + DyeColors[i]);
                     int newColor = i + randAdd;
                     //check the color ring
                     if(newColor > 15){
@@ -52,7 +52,7 @@ public class SheepColorMixin  {
                     }else if(newColor < 0){
                         newColor += 15;
                     }
-                    System.out.println("newColor: "+ newColor + " newColorName: " + DyeColors[newColor]);
+                    //System.out.println("newColor: "+ newColor + " newColorName: " + DyeColors[newColor]);
                     DyeColor tempColor = DyeColor.byName(DyeColors[newColor], current);
                     cir.setReturnValue(tempColor);
                 }

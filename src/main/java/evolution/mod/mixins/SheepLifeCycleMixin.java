@@ -1,6 +1,6 @@
-package eliarbogast.evolution.mod.mixins;
+package evolution.mod.mixins;
 
-import eliarbogast.evolution.mod.SheepEntityExt;
+import evolution.mod.SheepEntityExt;
 import net.minecraft.block.Material;
 import net.minecraft.block.MaterialColor;
 import net.minecraft.entity.EntityType;
@@ -10,15 +10,13 @@ import net.minecraft.entity.passive.SheepEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static eliarbogast.evolution.mod.utils.DyeUtils.colorRingOfDyeColors;
-import static eliarbogast.evolution.mod.utils.DyeUtils.colorRingOfMaterials;
+import static evolution.mod.utils.DyeUtils.colorRingOfDyeColors;
+import static evolution.mod.utils.DyeUtils.colorRingOfMaterials;
 /**
  * @author
  * Silas Zhao
@@ -31,7 +29,7 @@ public abstract class SheepLifeCycleMixin extends AnimalEntity implements SheepE
 
     //@Inject(method="onEatingGrass", at = @At("HEAD"))
     public void onEatingGrass(CallbackInfo info) {
-        System.out.println("onEatingGrass");
+        //System.out.println("onEatingGrass");
         ((SheepEntityExt)this).killSheepBySurroundingColor();
     }
     //this function can return the most appeared surrounding color.
@@ -65,7 +63,7 @@ public abstract class SheepLifeCycleMixin extends AnimalEntity implements SheepE
     //this is the function that can kill sheep.
     public void killSheepBySurroundingColor(){
         if(Random(getDifference())){
-            System.out.println("dead shee color: " + ((SheepEntityInvoker)this).getSheepColor().name());
+            //System.out.println("dead shee color: " + ((SheepEntityInvoker)this).getSheepColor().name());
             //kill the sheep directly by calling onDeath
             this.onDeath(DamageSource.OUT_OF_WORLD);
         }
@@ -78,9 +76,9 @@ public abstract class SheepLifeCycleMixin extends AnimalEntity implements SheepE
     //This function is to detect the difference between color of sheep skin and the surrounding color.
     public double getDifference(){
         int colorOfSurroundings = colorRingOfMaterials.get(((SheepEntityExt)this).getSurroundingColor().id);
-        System.out.println("((SheepEntityExt)this).getSurroundingColor().color: "+((SheepEntityExt)this).getSurroundingColor().id);
+        //System.out.println("((SheepEntityExt)this).getSurroundingColor().color: "+((SheepEntityExt)this).getSurroundingColor().id);
         int sheepColor = colorRingOfDyeColors.get(((SheepEntityInvoker)this).getSheepColor().name().toLowerCase());
-        System.out.println("((SheepEntityInvoker)this).getSheepColor().name(): " + ((SheepEntityInvoker)this).getSheepColor().name());
+        //System.out.println("((SheepEntityInvoker)this).getSheepColor().name(): " + ((SheepEntityInvoker)this).getSheepColor().name());
         double difference = 0;
         /* compare the difference by the contrast of the sheep, max = 8 */
         //This is to use dyeColor as a color ring. more details in the readMe.txt
@@ -95,7 +93,7 @@ public abstract class SheepLifeCycleMixin extends AnimalEntity implements SheepE
         difference = isBaby() ? difference / 2: difference;
         //if the sheep has a similar color with its surrounding, namely difference < 2, decrease the difference by one half.
         difference = difference < 2? (difference / 25):(difference / 12);
-        System.out.println("difference: " + difference);//adding comment here and readME.
+        //System.out.println("difference: " + difference);//adding comment here and readME.
         //difference is between 0- 0.666
         return difference;
     }
