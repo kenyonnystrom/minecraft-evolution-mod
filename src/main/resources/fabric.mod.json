@@ -7,11 +7,12 @@
   "description": "This mod aims to implement realistic evolution into Minecraft",
   "authors": [
     "Eli Arbogast",
-    "Silas Zhao"
+    "Silas Zhao",
+    "Benjamin Santos"
   ],
   "contact": {
     "homepage": "",
-    "sources": "https://github.com/eliarbogast/evolution"
+    "sources": "https://github.com/anyaevostinar/minecraft-sheep-evolution"
   },
 
   "license": "CC0-1.0",
