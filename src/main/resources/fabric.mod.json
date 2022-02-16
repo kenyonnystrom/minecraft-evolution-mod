@@ -1,17 +1,19 @@
 {
   "schemaVersion": 1,
-  "id": "evolution",
+  "id": "evo",
   "version": "${version}",
 
   "name": "Evolution Mod",
   "description": "This mod aims to implement realistic evolution into Minecraft",
   "authors": [
-    "Eli Arbogast",
-    "Silas Zhao"
+    "Kenyon Nystrom",
+    "Matthew Rasmussen",
+    "Ben Santos",
+    "Eric Wright"
   ],
   "contact": {
     "homepage": "",
-    "sources": "https://github.com/eliarbogast/evolution"
+    "sources": "https://github.com/anyaevostinar/minecraft-sheep-evolution"
   },
 
   "license": "CC0-1.0",
@@ -20,17 +22,17 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "evolution.mod.Evolution"
+      "evo.mod.Evo"
     ]
   },
   "mixins": [
-    "evolution.mixins.json"
+    "evo.mixins.json"
   ],
 
   "depends": {
-    "fabricloader": ">=0.7.4",
+    "fabricloader": ">=0.13.1",
     "fabric": "*",
-    "minecraft": "1.16.x"
+    "minecraft": "1.18.x"
   },
   "suggests": {
     "another-mod": "*"
