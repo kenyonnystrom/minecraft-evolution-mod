@@ -14,7 +14,7 @@ import net.minecraft.util.registry.Registry;
 
 public class Evolution implements ModInitializer {
     public static final String MOD_ID = "evolution";//block set up
-    public static final Block EVOLUTION_SAPLING_BLOCK = new Block(FabricBlockSettings.of(Material.PLANT).strength(0F, 0f).sounds(BlockSoundGroup.GRASS).breakByTool(FabricToolTags.HOES));
+    public static final Block EVOLUTION_SAPLING_BLOCK = new Block(FabricBlockSettings.of(Material.PLANT).strength(0F, 0f).sounds(BlockSoundGroup.GRASS).breakByTool(FabricToolTags.HOES).ticksRandomly());
     @Override
     public void onInitialize() {
         Registry.register(Registry.BLOCK, new Identifier(MOD_ID,"evolution_sapling_block"), EVOLUTION_SAPLING_BLOCK);
