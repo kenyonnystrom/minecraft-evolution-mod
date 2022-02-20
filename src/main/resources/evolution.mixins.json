@@ -15,8 +15,7 @@
     "EscapeFromWolfMixin",
     "AngerTimeMixin",
     "AttackSheepAndBreedMixin",
-    "AnimalAmountMixin",
-    "CropTestMixin"
+    "AnimalAmountMixin"
   ],
   "injectors": {
     "defaultRequire": 1
