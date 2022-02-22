@@ -1,4 +1,4 @@
-package evolution.mod.blocks;
+package evo.mod.blocks;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -10,7 +10,7 @@ import java.util.Random;
 
 public class EvolutionBlock extends Block {
 
-    public EvolutionBlock(Settings settings, int gene1) {
+    public EvolutionBlock(Settings settings) {
         //The actual parameters given to super() are used to initialize the inherited instance variables
         super(settings);
     }

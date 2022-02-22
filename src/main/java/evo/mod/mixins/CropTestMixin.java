@@ -1,4 +1,4 @@
-package evolution.mod.mixins;
+package evo.mod.mixins;
 
 import net.minecraft.block.*;
 import net.minecraft.server.world.ServerWorld;

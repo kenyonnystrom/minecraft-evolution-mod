@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "evo:block/evolution_sapling_block"
+    }
+  }
+}
