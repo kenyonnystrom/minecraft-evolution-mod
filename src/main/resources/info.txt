@@ -1,0 +1,5 @@
+Currently, the original sheep evolution mod folder is contained in the folder
+"old_mod" and is effectively inert, as fabric.mod.json points to
+evo.mixins.json rather than evolution.mixins.json. I expect we will eventually
+remove that folder altogether once we incorporate their mixins into our mod,
+but for the time being they remain there as a reference.

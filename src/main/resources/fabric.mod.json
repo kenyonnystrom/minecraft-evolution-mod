@@ -1,15 +1,15 @@
 {
   "schemaVersion": 1,
-  "id": "evolution",
+  "id": "evo",
   "version": "${version}",
 
   "name": "Evolution Mod",
   "description": "This mod aims to implement realistic evolution into Minecraft",
   "authors": [
-     "Kenyon Nystrom",
-     "Matthew Rasmussen",
-     "Ben Santos",
-     "Eric Wright"
+    "Kenyon Nystrom",
+    "Matthew Rasmussen",
+    "Ben Santos",
+    "Eric Wright"
   ],
   "contact": {
     "homepage": "",
@@ -22,17 +22,17 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "evolution.mod.Evolution"
+      "evo.mod.Evo"
     ]
   },
   "mixins": [
-    "evolution.mixins.json"
+    "evo.mixins.json"
   ],
 
   "depends": {
-    "fabricloader": ">=0.7.4",
+    "fabricloader": ">=0.13.1",
     "fabric": "*",
-    "minecraft": "1.16.x"
+    "minecraft": "1.18.x"
   },
   "suggests": {
     "another-mod": "*"
