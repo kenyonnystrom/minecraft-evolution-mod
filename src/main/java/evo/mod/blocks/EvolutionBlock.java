@@ -29,9 +29,9 @@ public class EvolutionBlock extends Block implements BlockEntityProvider {
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         if (!world.isClient) {
             EvolutionBlockEntity blockEntity = (EvolutionBlockEntity) world.getBlockEntity(pos);
-            String s =String.valueOf(blockEntity.gene2);
+            String s =String.valueOf(blockEntity.getGene2());
             player.sendMessage(new LiteralText(s), false);
-            blockEntity.gene2 = blockEntity.gene2 + 10;
+            blockEntity.updateGene2(0.1f);
         }
 
         return ActionResult.SUCCESS;
@@ -57,7 +57,7 @@ public class EvolutionBlock extends Block implements BlockEntityProvider {
         BlockPos new_block_location = new BlockPos(block_x + x_offset, block_y,block_z + z_offset);
         world.setBlockState(new_block_location, new_block);
         EvolutionBlockEntity blockEntity = (EvolutionBlockEntity) world.getBlockEntity(new_block_location);
-        blockEntity.gene2 = blockEntity.gene2 + 10;
+        blockEntity.updateGene2(1.5f);
     }
 
     //link block entity and block
