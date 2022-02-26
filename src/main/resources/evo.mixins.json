@@ -6,6 +6,7 @@
   "mixins": [
   ],
   "client": [
+    "SheepKnowTemp"
   ],
   "injectors": {
     "defaultRequire": 1
