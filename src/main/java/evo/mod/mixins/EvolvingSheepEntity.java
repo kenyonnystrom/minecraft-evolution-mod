@@ -24,6 +24,12 @@ extends AnimalEntity {
     private int realTick = 100;
     private int lifeTicks = 0;
 
+    //We can decide on range in testing
+    //5 being avg, 0 being virtually no wool, 10 being super chunky
+    //start with 2: 0 = no wool, 1 = normal wool, 2 = heavy wool
+    private int woolDensity = 1;
+    //will need to decide how parents pass density on and how kid recieves
+
     public EvolvingSheepEntity(EntityType<? extends AnimalEntity> entityType, World world) {
         super(entityType, world);
     }
@@ -35,14 +41,14 @@ extends AnimalEntity {
         return biome.getTemperature();
     }
 
-    // React to temperature. Need to line these up with wool sizes!
+    // React to temperature.
     private void feelTemperature() {
         float currTemp = this.getTemp();
-        if (currTemp < 0F) {
+        if (currTemp < 0F && woolDensity != 2) {
             this.damage(DamageSourceExt.HYPOTHERMIA, 1.5F);
-        } else if (currTemp < 0.5F) {
+        } else if (currTemp < 0.5F && woolDensity < 1) {
             this.damage(DamageSourceExt.HYPOTHERMIA, 1.5F);
-        } else if (currTemp < 1F) {
+        } else if (currTemp < 1F && woolDensity > 1) {
             this.damage(DamageSourceExt.HEATSTROKE, 1.5F);
         } else {
             this.damage(DamageSourceExt.HEATSTROKE, 1.5F);
