@@ -1,9 +1,6 @@
 package evo.mod.blockentity;
-
-import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.BlockPos;
 import evo.mod.evo;
@@ -36,6 +33,7 @@ public class EvolutionBlockEntity extends BlockEntity {
     public float getGene2(){
         return gene2;
     }
+
     public void updateGene2(float multiplier){
         gene2 = gene2 * multiplier;
         markDirty();
