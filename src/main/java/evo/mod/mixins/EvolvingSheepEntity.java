@@ -150,9 +150,23 @@ extends AnimalEntity {
                 world.spawnEntity(new ExperienceOrbEntity(world, this.getX(), this.getY(), this.getZ(), this.getRandom().nextInt(7) + 1));
             }
 
-            // Inherit parent wool (TO-DO:  IMPLEMENT RUDIMENTARY MUTATION)
+            // Inherit parent wool
             EvolvingSheepEntity sheepKid = (EvolvingSheepEntity) kid;
-            sheepKid.setWool(this.getWool());
+            //80% chance of getting parent's wool
+            //20% chance to get one step above or below
+            //within that 50/50 for above or below
+            int i = random.nextInt(10);
+            if (i == 0 && this.getWool() != WoolType.NO_WOOL){
+                //one below
+                sheepKid.setWool(WoolType.byId(this.getWool().getId() - 1));
+            }
+            else if (i == 1 && this.getWool() != WoolType.THICK_WOOL){
+                //one above
+                sheepKid.setWool(WoolType.byId(this.getWool().getId() + 1));
+            }
+            else {
+                sheepKid.setWool(this.getWool());
+            }
         }
     }
 
@@ -160,14 +174,13 @@ extends AnimalEntity {
     private void increaseAge() {
         lifeTicks++;
         System.out.println(lifeTicks);
-        // With re-framed ticks, an old-age val of 50 seems to work well. Remove this comment after testing is done
-        if (lifeTicks > 10) {
-            // Die of old age (TO-DO:  REMOVE ONCE SOME FORM OF PREDATION EXISTS)
-            this.onDeath(DamageSourceExt.OUT_OF_WORLD);
-            this.kill();
-        } else if (lifeTicks == 6 || lifeTicks == 4) {
-            // 50-50 chance of reproducing (TO-DO:  CHANGE REPRODUCTION LIKELIHOOD)
-            if (Math.random() > 0.5) {
+        int p = random.nextInt(100);
+        if (p <= 20) {
+            this.damage(DamageSourceExt.BITE, 2.0F);
+        }
+        if (!this.isBaby()){
+            int i = random.nextInt(100);
+            if (i <= 15) {
                 this.giveBirth();
             }
         }

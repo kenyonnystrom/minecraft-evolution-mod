@@ -9,4 +9,5 @@ public class DamageSourceExt extends DamageSource {
     }
     public static final DamageSource HEATSTROKE = (new DamageSourceExt("heatstroke")).setBypassesArmor();
     public static final DamageSource HYPOTHERMIA = (new DamageSourceExt("hypothermia")).setBypassesArmor();
+    public static final DamageSource BITE = (new DamageSourceExt("bite"));
 }
