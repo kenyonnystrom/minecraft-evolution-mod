@@ -56,8 +56,6 @@ public class EvolutionBlockEntity extends BlockEntity {
         return gene2;
     }
 
-<<<<<<< Updated upstream
-=======
     public float get_idealTemp() {return idealTemp;}
     public float get_idealMoisture() {return idealMoisture;}
     public float get_growthPercent() {return growthPercent;}
@@ -78,7 +76,7 @@ public class EvolutionBlockEntity extends BlockEntity {
         health = newHealth;
         markDirty();
     }
->>>>>>> Stashed changes
+
     public void updateGene2(float multiplier){
         gene2 = gene2 * multiplier;
         markDirty();
