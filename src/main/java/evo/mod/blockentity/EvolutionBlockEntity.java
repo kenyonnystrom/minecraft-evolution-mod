@@ -17,7 +17,7 @@ public class EvolutionBlockEntity extends BlockEntity {
     private int age; //number of random ticks the tree has received
     private int ageProduceSeeds; //the tree will only attempt to produce new trees when age >= this value, otherwise, all resources will be spent on growth
     private int ageStopGrowing; //the tree will only attempt to grow when age >= this value, otherwise, all resources will be spent on growth
-
+    private int height;
     //constructor
     public EvolutionBlockEntity(BlockPos pos, BlockState state) {
         super(evo.EVOLUTION_ENTITY, pos, state);
@@ -35,6 +35,7 @@ public class EvolutionBlockEntity extends BlockEntity {
         tag.putInt("age",age);
         tag.putInt("aageProduceSeeds",ageProduceSeeds);
         tag.putInt("ageStopGrowing",ageStopGrowing);
+        tag.putInt("height",height);
         super.writeNbt(tag);
     }
 
@@ -50,6 +51,7 @@ public class EvolutionBlockEntity extends BlockEntity {
         age = tag.getInt("age");
         ageProduceSeeds = tag.getInt("ageProduceSeeds");
         ageStopGrowing = tag.getInt("ageStopGrowing");
+        height = tag.getInt("height");
     }
 
     public float getGene2(){
@@ -63,6 +65,7 @@ public class EvolutionBlockEntity extends BlockEntity {
     public int get_age() {return age;}
     public int get_ageProduceSeeds() {return ageProduceSeeds;}
     public int get_ageStopGrowing() {return ageStopGrowing;}
+    public int get_height() {return height;}
 
     public void increment_age(){
         age = age + 1;
