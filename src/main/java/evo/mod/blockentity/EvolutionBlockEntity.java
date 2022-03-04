@@ -4,12 +4,14 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.BlockPos;
 import evo.mod.evo;
+import net.minecraft.world.biome.Biome;
 
 public class EvolutionBlockEntity extends BlockEntity {
 
     //data to store
     private float gene1 = 100;
     private float gene2 = 200;
+    private float currentTemp;
     private float idealTemp; //health gets worse the farther actual temp it is from this value
     private float idealMoisture; // same as above but for water (we will have to generate value for water)
     private float growthPercent; //at times when tree is doing both growing and reproducing, what percent of health is spent on growth
@@ -32,6 +34,7 @@ public class EvolutionBlockEntity extends BlockEntity {
         tag.putFloat("idealMoisture",idealMoisture);
         tag.putFloat("growthPercent",growthPercent);
         tag.putFloat("health",health);
+        tag.putFloat("currentTemp",currentTemp);
         tag.putInt("age",age);
         tag.putInt("aageProduceSeeds",ageProduceSeeds);
         tag.putInt("ageStopGrowing",ageStopGrowing);
@@ -82,6 +85,12 @@ public class EvolutionBlockEntity extends BlockEntity {
 
     public void updateGene2(float multiplier){
         gene2 = gene2 * multiplier;
+        markDirty();
+    }
+
+    public void get_Temp() {
+        Biome biome = world.getBiome(pos);
+        currentTemp = biome.getTemperature();
         markDirty();
     }
 

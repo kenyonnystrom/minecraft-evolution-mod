@@ -30,6 +30,7 @@ public class EvolutionBlock extends Block implements BlockEntityProvider {
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         if (!world.isClient) {
             EvolutionBlockEntity blockEntity = (EvolutionBlockEntity) world.getBlockEntity(pos);
+            //testing
             String s =String.valueOf(blockEntity.getGene2());
             player.sendMessage(new LiteralText(s), false);
             blockEntity.updateGene2(0.1f);
@@ -40,7 +41,15 @@ public class EvolutionBlock extends Block implements BlockEntityProvider {
 
     @Override
     public void randomTick(BlockState state, ServerWorld world, BlockPos pos, Random random){
+        BlockPos new_block_location = clone(world, pos);
+        EvolutionBlockEntity blockEntity = (EvolutionBlockEntity) world.getBlockEntity(new_block_location);
+        blockEntity.updateGene2(1.5f);
+    }
 
+    //clones a new block nearby
+    //can add more information to constructor to modify chance/frequency
+    //returns location of cloned block for further use
+    public BlockPos clone(ServerWorld world, BlockPos pos){
         //get position of current block
         int block_x = pos.getX();
         int block_y = pos.getY();
@@ -57,8 +66,7 @@ public class EvolutionBlock extends Block implements BlockEntityProvider {
         BlockState new_block = this.getDefaultState();
         BlockPos new_block_location = new BlockPos(block_x + x_offset, block_y,block_z + z_offset);
         world.setBlockState(new_block_location, new_block);
-        EvolutionBlockEntity blockEntity = (EvolutionBlockEntity) world.getBlockEntity(new_block_location);
-        blockEntity.updateGene2(1.5f);
+        return new_block_location;
     }
     public void newTree(ServerWorld world, BlockPos pos, Random random,int height){
         int x_offset = (int) Math.round(random.nextGaussian()*height);
@@ -78,6 +86,7 @@ public class EvolutionBlock extends Block implements BlockEntityProvider {
                 status = 3;
             }
 
+<<<<<<< Updated upstream
         }
         if (status == 2){
             BlockPos newTreePos = checkPos.up();
@@ -89,6 +98,11 @@ public class EvolutionBlock extends Block implements BlockEntityProvider {
 
     }
     
+=======
+
+
+
+>>>>>>> Stashed changes
     //link block entity and block
     @Override
     public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
