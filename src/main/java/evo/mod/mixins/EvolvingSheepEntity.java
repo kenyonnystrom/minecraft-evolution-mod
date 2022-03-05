@@ -99,7 +99,12 @@ extends AnimalEntity {
     private float getTemp() {
         BlockPos pos = super.getBlockPos();
         Biome biome = world.getBiome(pos);
-        return biome.getTemperature();
+        int currentLightLvl = world.getLightLevel(pos);
+        // TO DO: balance light level in relation to temp
+        double calculateLight = (currentLightLvl - 7) * 0.2;
+        float lightOnTemp = (float) calculateLight;
+        float finalTemp = biome.getTemperature() + lightOnTemp;
+        return lightOnTemp;
     }
 
     // Get temperature, and take damage based on this sheep's wool type
