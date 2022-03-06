@@ -1,7 +1,13 @@
+//
+// This mixin edits SheepEntity to allow it to get and feel temperature, as well as
+// track its own wool type, determining its appearance and sensitivity to temperature.
+//
+
 package evo.mod.mixins;
 
 import evo.mod.DamageSourceExt;
 
+import evo.mod.EvolvingSheepAccess;
 import evo.mod.WoolType;
 import net.minecraft.entity.EntityData;
 import net.minecraft.entity.EntityType;
@@ -33,7 +39,8 @@ import java.util.Random;
 
 @Mixin(SheepEntity.class)
 public abstract class EvolvingSheepEntity
-extends AnimalEntity {
+extends AnimalEntity
+implements EvolvingSheepAccess {
     private int realTick = 100;
     private int lifeTicks = 0;
     private static final TrackedData<Byte> WOOL;
@@ -59,12 +66,12 @@ extends AnimalEntity {
     // Sets wool type for this sheep (more info in WoolType.java) and adds it to tracker
     public void setWool(WoolType wool) {
         byte b = this.dataTracker.get(WOOL);
-        this.dataTracker.set(WOOL, (byte)(b & 240 | wool.getId() & 3));
+        this.dataTracker.set(WOOL, (byte)(b & 240 | wool.getId() & 15));
     }
 
     // Gets wool type of this sheep from data tracker, returning WoolType
     public WoolType getWool() {
-        return WoolType.byId(this.dataTracker.get(WOOL) & 3);
+        return WoolType.byId(this.dataTracker.get(WOOL) & 15);
     }
 
     // If sheep is spawned in rather than birthed, randomly chooses its starting wool state
@@ -92,6 +99,20 @@ extends AnimalEntity {
     public void initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, EntityData entityData, NbtCompound entityNbt, CallbackInfoReturnable<EntityData> cir) {
         this.setWool(generateDefaultWool(world.getRandom()));
     }
+
+    // Don't allow no_wool sheep to be sheared
+    @Inject(method = "isShearable()Z", at = @At("RETURN"), cancellable = true)
+    private void isShearable(CallbackInfoReturnable<Boolean> cir) {
+        if (this.getWool() == WoolType.NO_WOOL)
+            cir.setReturnValue(false);
+    }
+
+    // Wool size increases wool output (still randomized)
+    @ModifyVariable(method = "sheared", at = @At("STORE"), ordinal = 0)
+    public int sheared(int i) {
+        return i * this.getWool().getId();
+    }
+
     //endregion
     //region TEMPERATURE-RELATED METHODS
 
@@ -109,6 +130,7 @@ extends AnimalEntity {
         switch(this.getWool()) {
             case NO_WOOL:
                 if (currTemp < 0.5F) {
+                    // Death in five hits
                     this.damage(DamageSourceExt.HYPOTHERMIA, 1.5F);
                 }
                 break;
@@ -150,11 +172,10 @@ extends AnimalEntity {
                 world.spawnEntity(new ExperienceOrbEntity(world, this.getX(), this.getY(), this.getZ(), this.getRandom().nextInt(7) + 1));
             }
 
-            // Inherit parent wool
+            // Wool size inheritance
             EvolvingSheepEntity sheepKid = (EvolvingSheepEntity) kid;
             //80% chance of getting parent's wool
-            //20% chance to get one step above or below
-            //within that 50/50 for above or below
+            //10% each to get one step above or below
             int i = random.nextInt(10);
             if (i == 0 && this.getWool() != WoolType.NO_WOOL){
                 //one below
@@ -176,6 +197,7 @@ extends AnimalEntity {
         System.out.println(lifeTicks);
         int p = random.nextInt(100);
         if (p <= 20) {
+            // Death in four hits
             this.damage(DamageSourceExt.BITE, 2.0F);
         }
         if (!this.isBaby()){

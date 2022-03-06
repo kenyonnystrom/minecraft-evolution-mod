@@ -17,7 +17,7 @@
   },
 
   "license": "CC0-1.0",
-  "icon": "assets/evolution/icon.png",
+  "icon": "assets/evo/icon.png",
 
   "environment": "*",
   "entrypoints": {
