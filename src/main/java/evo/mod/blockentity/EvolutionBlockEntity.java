@@ -2,6 +2,7 @@ package evo.mod.blockentity;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import evo.mod.evo;
 import net.minecraft.world.biome.Biome;
@@ -87,7 +88,14 @@ public class EvolutionBlockEntity extends BlockEntity {
         gene2 = gene2 * multiplier;
         markDirty();
     }
-
+    public float get_Health(ServerWorld world, BlockPos pos){
+        float light = (float) world.getLightLevel(pos.up(height));
+        this.get_Temp();
+        float temp_dist = (float) Math.pow(((idealTemp - currentTemp)*5), 2.0F);
+        float newHealth = Math.max(0.0F, light - age - temp_dist);
+        this.set_health(newHealth);
+        return newHealth;
+    }
     public void get_Temp() {
         Biome biome = world.getBiome(pos);
         currentTemp = biome.getTemperature();
