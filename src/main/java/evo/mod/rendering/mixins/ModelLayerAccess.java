@@ -1,7 +1,7 @@
 /*
 Use to access new layers added in EntityModelLayersExt.
  */
-package evo.mod.mixins;
+package evo.mod.rendering.mixins;
 
 import net.minecraft.client.render.entity.model.EntityModelLayer;
 import net.minecraft.client.render.entity.model.EntityModelLayers;

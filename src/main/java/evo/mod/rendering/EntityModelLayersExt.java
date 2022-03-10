@@ -4,10 +4,10 @@
 // by way of the getLayer method using the ModelLayerAccess interface.
 //
 
-package evo.mod;
+package evo.mod.rendering;
 
 import net.minecraft.client.render.entity.model.EntityModelLayer;
-import static evo.mod.mixins.ModelLayerAccess.register;
+import static evo.mod.rendering.mixins.ModelLayerAccess.register;
 
 public abstract class EntityModelLayersExt{
     // Register new layers here

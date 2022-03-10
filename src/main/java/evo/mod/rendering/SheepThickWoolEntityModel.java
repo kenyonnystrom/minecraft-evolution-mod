@@ -3,7 +3,7 @@
 // in the head and body to evoke a sheep with much thicker wool than the standard.
 //
 
-package evo.mod;
+package evo.mod.rendering;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;

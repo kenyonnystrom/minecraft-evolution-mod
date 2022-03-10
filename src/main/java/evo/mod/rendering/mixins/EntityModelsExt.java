@@ -3,11 +3,11 @@
 // to the immutable map that is used in the model-rendering hierarchy.
 //
 
-package evo.mod.mixins;
+package evo.mod.rendering.mixins;
 
 import com.google.common.collect.ImmutableMap;
-import evo.mod.EntityModelLayersExt;
-import evo.mod.SheepThickWoolEntityModel;
+import evo.mod.rendering.EntityModelLayersExt;
+import evo.mod.rendering.SheepThickWoolEntityModel;
 import net.minecraft.client.model.TexturedModelData;
 import net.minecraft.client.render.entity.model.EntityModelLayer;
 import net.minecraft.client.render.entity.model.EntityModels;

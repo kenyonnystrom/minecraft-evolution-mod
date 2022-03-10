@@ -4,10 +4,13 @@
 // are rendered based on the wool type or sheared state of the sheep.
 //
 
-package evo.mod.mixins;
+package evo.mod.rendering.mixins;
 
 import evo.mod.*;
 
+import evo.mod.rendering.EntityModelLayersExt;
+import evo.mod.rendering.SheepThickWoolEntityModel;
+import evo.mod.sheep.EvolvingSheepAccess;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;

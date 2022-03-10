@@ -1,4 +1,4 @@
-package evo.mod;
+package evo.mod.features;
 
 import net.minecraft.entity.damage.DamageSource;
 

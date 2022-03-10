@@ -26,7 +26,8 @@
     ]
   },
   "mixins": [
-    "evo.mixins.json"
+    "evo.sheep.mixins.json",
+    "evo.rendering.mixins.json"
   ],
 
   "depends": {

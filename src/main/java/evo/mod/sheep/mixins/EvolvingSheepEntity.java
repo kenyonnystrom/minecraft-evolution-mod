@@ -3,12 +3,12 @@
 // track its own wool type, determining its appearance and sensitivity to temperature.
 //
 
-package evo.mod.mixins;
+package evo.mod.sheep.mixins;
 
-import evo.mod.DamageSourceExt;
+import evo.mod.features.DamageSourceExt;
 
-import evo.mod.EvolvingSheepAccess;
-import evo.mod.WoolType;
+import evo.mod.sheep.EvolvingSheepAccess;
+import evo.mod.features.WoolType;
 import net.minecraft.entity.EntityData;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ExperienceOrbEntity;
@@ -125,7 +125,7 @@ implements EvolvingSheepAccess {
         double calculateLight = (currentLightLvl - 7) * 0.2;
         float lightOnTemp = (float) calculateLight;
         float finalTemp = biome.getTemperature() + lightOnTemp;
-        return lightOnTemp;
+        return finalTemp;
     }
 
     // Get temperature, and take damage based on this sheep's wool type
