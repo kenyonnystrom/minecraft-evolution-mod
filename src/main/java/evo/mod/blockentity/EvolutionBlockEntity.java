@@ -1,11 +1,14 @@
 package evo.mod.blockentity;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import evo.mod.evo;
 import net.minecraft.world.biome.Biome;
+
+import java.util.Random;
 
 public class EvolutionBlockEntity extends BlockEntity {
 
@@ -100,6 +103,17 @@ public class EvolutionBlockEntity extends BlockEntity {
         Biome biome = world.getBiome(pos);
         currentTemp = biome.getTemperature();
         markDirty();
+    }
+    //works but not consistently
+    //relies on block recieivng a random tick
+    public void die(ServerWorld world){
+        Random r = new Random();
+        if (r.nextInt(30)<15){
+            BlockPos current_pos = pos;
+            BlockState deadBush = Blocks.DEAD_BUSH.getDefaultState();
+            world.setBlockState(pos,deadBush);
+            markRemoved();
+        }
     }
 
 }

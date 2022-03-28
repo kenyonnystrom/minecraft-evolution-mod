@@ -1,13 +1,9 @@
 package evo.mod.blocks;
 
 import evo.mod.blockentity.EvolutionBlockEntity;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockEntityProvider;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
+import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.Inventory;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.ActionResult;
@@ -15,13 +11,10 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.Nullable;
-
 
 import java.util.Random;
 
 public class EvolutionBlock extends Block implements BlockEntityProvider {
-
     public EvolutionBlock(Settings settings) {
         //The actual parameters given to super() are used to initialize the inherited instance variables
         super(settings);
@@ -38,37 +31,20 @@ public class EvolutionBlock extends Block implements BlockEntityProvider {
 
         return ActionResult.SUCCESS;
     }
-
+    //the code of this method will run everytime the block receives a random tick
     @Override
     public void randomTick(BlockState state, ServerWorld world, BlockPos pos, Random random){
-        BlockPos new_block_location = clone(world, pos);
-        EvolutionBlockEntity blockEntity = (EvolutionBlockEntity) world.getBlockEntity(new_block_location);
-        blockEntity.updateGene2(1.5f);
+        //cloneTree(world, pos, random,6);
+        EvolutionBlockEntity blockEntity = (EvolutionBlockEntity) world.getBlockEntity(pos);
+        blockEntity.die(world);
+        //BlockPos new_block_location = clone(world, pos);
+        //EvolutionBlockEntity blockEntity = (EvolutionBlockEntity) world.getBlockEntity(new_block_location);
+        //blockEntity.updateGene2(1.5f);
     }
 
-    //clones a new block nearby
-    //can add more information to constructor to modify chance/frequency
-    //returns location of cloned block for further use
-    public BlockPos clone(ServerWorld world, BlockPos pos){
-        //get position of current block
-        int block_x = pos.getX();
-        int block_y = pos.getY();
-        int block_z = pos.getZ();
-
-        //randomize offsets in nearby area
-        //no y-coordinate just yet
-        Random r = new Random();
-        int x_offset = r.nextInt(30) - 15;
-        int z_offset = r.nextInt(30) - 15;
-
-        //place a random block somewhere nearby
-        //spread custom block
-        BlockState new_block = this.getDefaultState();
-        BlockPos new_block_location = new BlockPos(block_x + x_offset, block_y,block_z + z_offset);
-        world.setBlockState(new_block_location, new_block);
-        return new_block_location;
-    }
-    public void newTree(ServerWorld world, BlockPos pos, Random random,int height){
+    //ensure we are only cloning to valid locations
+    // can amend to return block position of cloned block
+    public void cloneTree(ServerWorld world, BlockPos pos, Random random,int height){
         int x_offset = (int) Math.round(random.nextGaussian()*height);
         int z_offset = (int) Math.round(random.nextGaussian()*height);
         BlockPos checkPos = new BlockPos(pos.getX() + x_offset, pos.getY() +height,pos.getZ() + z_offset);
@@ -85,8 +61,6 @@ public class EvolutionBlock extends Block implements BlockEntityProvider {
             else{
                 status = 3;
             }
-
-<<<<<<< Updated upstream
         }
         if (status == 2){
             BlockPos newTreePos = checkPos.up();
@@ -95,14 +69,7 @@ public class EvolutionBlock extends Block implements BlockEntityProvider {
             EvolutionBlockEntity blockEntity = (EvolutionBlockEntity) world.getBlockEntity(newTreePos);
             blockEntity.updateGene2(1.5f);
         }
-
     }
-    
-=======
-
-
-
->>>>>>> Stashed changes
     //link block entity and block
     @Override
     public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
