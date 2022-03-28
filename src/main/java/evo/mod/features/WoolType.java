@@ -1,3 +1,8 @@
+//
+// Details a WoolType object with useful methods for interacting with it.
+// DyeColor served as inspiration.
+//
+
 package evo.mod.features;
 
 import net.minecraft.util.StringIdentifiable;

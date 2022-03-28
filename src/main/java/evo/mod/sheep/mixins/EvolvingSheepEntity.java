@@ -120,41 +120,40 @@ implements EvolvingSheepAccess {
     private float getTemp() {
         BlockPos pos = super.getBlockPos();
         Biome biome = world.getBiome(pos);
-        int currentLightLvl = world.getLightLevel(pos);
-        // TO DO: balance light level in relation to temp
-        double calculateLight = (currentLightLvl - 7) * 0.2;
-        float lightOnTemp = (float) calculateLight;
-        float finalTemp = biome.getTemperature() + lightOnTemp;
-        return finalTemp;
+        double temp = biome.getTemperature();
+        double light = world.getLightLevel(pos);
+        double altitude = pos.getY();
+        // (Not 100% final) Full temperature calculation
+        return (float) (40 * (temp + 0.5) + light - (altitude * 0.1));
     }
 
     // Get temperature, and take damage based on this sheep's wool type
     private void feelTemperature() {
         float currTemp = this.getTemp();
-        System.out.println(currTemp);
+        System.out.printf("Temp: %f%n", currTemp);
         switch(this.getWool()) {
             case NO_WOOL:
-                if (currTemp < 0.5F) {
+                if (currTemp < 65F) {
                     // Death in five hits
                     this.damage(DamageSourceExt.HYPOTHERMIA, 1.5F);
                 }
                 break;
             case THIN_WOOL:
-                if (currTemp < 0.3F) {
+                if (currTemp < 45F) {
                     this.damage(DamageSourceExt.HYPOTHERMIA, 1.5F);
-                } else if (currTemp > 1.5F) {
+                } else if (currTemp > 100F) {
                     this.damage(DamageSourceExt.HEATSTROKE, 1.5F);
                 }
                 break;
             case STD_WOOL:
-                if (currTemp < 0F) {
+                if (currTemp < 10F) {
                     this.damage(DamageSourceExt.HYPOTHERMIA, 1.5F);
-                } else if (currTemp > 0.8F) {
+                } else if (currTemp > 75F) {
                     this.damage(DamageSourceExt.HEATSTROKE, 1.5F);
                 }
                 break;
             case THICK_WOOL:
-                if (currTemp > 0.5F) {
+                if (currTemp > 55F) {
                     this.damage(DamageSourceExt.HEATSTROKE, 1.5F);
                 }
                 break;
@@ -162,6 +161,8 @@ implements EvolvingSheepAccess {
     }
     //endregion
     //region LIFE-RELATED METHODS
+
+
 
     // Have a kid. Currently asexual
     private void giveBirth() {
@@ -199,7 +200,9 @@ implements EvolvingSheepAccess {
     // Called with tick; ages sheep and determines when they reproduce/die of old age
     private void increaseAge() {
         lifeTicks++;
-        System.out.println(lifeTicks);
+        this.growUp(200);
+        System.out.printf("Life: %d%n", lifeTicks);
+        System.out.printf("Age: %d%n", this.getBreedingAge());
         int p = random.nextInt(100);
         if (p <= 20) {
             // Death in four hits
