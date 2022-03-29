@@ -13,14 +13,15 @@ import java.util.Random;
 public class EvolutionBlockEntity extends BlockEntity {
 
     //data to store
+    Random r = new Random();
     private float gene1 = 100;
     private float gene2 = 200;
     private float currentTemp;
-    private float idealTemp; //health gets worse the farther actual temp it is from this value
+    private double idealTemp = -0.7 + (r.nextFloat() * 2.7);; //health gets worse the farther actual temp it is from this value
     private float idealMoisture; // same as above but for water (we will have to generate value for water)
     private float growthPercent; //at times when tree is doing both growing and reproducing, what percent of health is spent on growth
     private float health; //health, calculated at the start of each random tick, based on location and genetics and randomness
-    private int age; //number of random ticks the tree has received
+    private int age = 1; //number of random ticks the tree has received
     private int ageProduceSeeds; //the tree will only attempt to produce new trees when age >= this value, otherwise, all resources will be spent on growth
     private int ageStopGrowing; //the tree will only attempt to grow when age >= this value, otherwise, all resources will be spent on growth
     private int height;
@@ -34,7 +35,7 @@ public class EvolutionBlockEntity extends BlockEntity {
         // Save the current value of the number to the tag
         tag.putFloat("gene1", gene1);
         tag.putFloat("gene2", gene2);
-        tag.putFloat("idealTemp",idealTemp);
+        tag.putDouble("idealTemp",idealTemp);
         tag.putFloat("idealMoisture",idealMoisture);
         tag.putFloat("growthPercent",growthPercent);
         tag.putFloat("health",health);
@@ -65,11 +66,11 @@ public class EvolutionBlockEntity extends BlockEntity {
         return gene2;
     }
 
-    public float get_idealTemp() {return idealTemp;}
+    public double get_idealTemp() {return idealTemp;}
     public float get_idealMoisture() {return idealMoisture;}
     public float get_growthPercent() {return growthPercent;}
     public float get_health() {return health;}
-    public int get_age() {return age;}
+    public int get_Age() {return age;}
     public int get_ageProduceSeeds() {return ageProduceSeeds;}
     public int get_ageStopGrowing() {return ageStopGrowing;}
     public int get_height() {return height;}
@@ -91,29 +92,37 @@ public class EvolutionBlockEntity extends BlockEntity {
         gene2 = gene2 * multiplier;
         markDirty();
     }
+    public void update_IdealTemp(float multiplier){
+        idealTemp = idealTemp * multiplier;
+        markDirty();
+    }
+
     public float get_Health(ServerWorld world, BlockPos pos){
         float light = (float) world.getLightLevel(pos.up(height));
         this.get_Temp();
-        float temp_dist = (float) Math.pow(((idealTemp - currentTemp)*5), 2.0F);
+        float temp_dist = get_TempDist();
         float newHealth = Math.max(0.0F, light - age - temp_dist);
         this.set_health(newHealth);
         return newHealth;
     }
-    public void get_Temp() {
+
+    public float get_TempDist(){
+        float temp_dist = (float) Math.pow(((idealTemp - currentTemp)*5), 2.0F);
+        return temp_dist;
+    }
+
+    public float get_Temp() {
         Biome biome = world.getBiome(pos);
         currentTemp = biome.getTemperature();
         markDirty();
+        return currentTemp;
     }
-    //works but not consistently
+
     //relies on block recieivng a random tick
     public void die(ServerWorld world){
-        Random r = new Random();
-        if (r.nextInt(30)<15){
-            BlockPos current_pos = pos;
             BlockState deadBush = Blocks.DEAD_BUSH.getDefaultState();
             world.setBlockState(pos,deadBush);
             markRemoved();
-        }
     }
 
 }
