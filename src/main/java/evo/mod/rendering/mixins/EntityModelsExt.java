@@ -21,7 +21,7 @@ import java.util.Map;
 @Mixin(EntityModels.class)
 public abstract class EntityModelsExt {
     @Inject(remap = false, method = "getModels", at = @At(value = "INVOKE", target = "net/minecraft/client/render/entity/model/BipedEntityModel.getModelData (Lnet/minecraft/client/model/Dilation;F)Lnet/minecraft/client/model/ModelData;", ordinal = 0), locals = LocalCapture.CAPTURE_FAILSOFT)
-    private static void onTest(CallbackInfoReturnable<Map<EntityModelLayer, TexturedModelData>> cir, ImmutableMap.Builder<EntityModelLayer, TexturedModelData> builder) {
+    private static void addToMap(CallbackInfoReturnable<Map<EntityModelLayer, TexturedModelData>> cir, ImmutableMap.Builder<EntityModelLayer, TexturedModelData> builder) {
         builder.put(EntityModelLayersExt.SHEEP_THICK, SheepThickWoolEntityModel.getTexturedModelData());
     }
 }

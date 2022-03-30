@@ -9,6 +9,7 @@ import evo.mod.features.DamageSourceExt;
 
 import evo.mod.sheep.EvolvingSheepAccess;
 import evo.mod.features.WoolType;
+import net.minecraft.advancement.criterion.Criteria;
 import net.minecraft.entity.EntityData;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ExperienceOrbEntity;
@@ -21,8 +22,10 @@ import net.minecraft.entity.passive.PassiveEntity;
 import net.minecraft.entity.passive.SheepEntity;
 
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 
+import net.minecraft.stat.Stats;
 import net.minecraft.util.math.BlockPos;
 
 import net.minecraft.world.GameRules;
@@ -160,42 +163,106 @@ implements EvolvingSheepAccess {
         }
     }
     //endregion
-    //region LIFE-RELATED METHODS
+    //region INHERITANCE-RELATED METHODS
 
+    // Injecting cannot accomplish the desired result (passing "genes" between EvolvingSheepEntities) without completely
+    // overriding the breeding function in AnimalEntity, so this method does just that. The only differences in this
+    // version of the method are an updated call to createChild in SheepEntity and a redirect to passGenes below.
+    @Override
+    public void breed(ServerWorld world, AnimalEntity other) {
+        PassiveEntity passiveEntity = this.createChild(world, this);
+        if (passiveEntity != null) {
+            // Newly added section
+            EvolvingSheepEntity kid = this.passGenes(passiveEntity, other);
 
-
-    // Have a kid. Currently asexual
-    private void giveBirth() {
-        // Asexually reproduce
-        PassiveEntity kid = this.createChild((ServerWorld) world, this);
-        if (kid != null) {
+            // Previously established section
+            ServerPlayerEntity serverPlayerEntity = this.getLovingPlayer();
+            if (serverPlayerEntity == null && other.getLovingPlayer() != null) {
+                serverPlayerEntity = other.getLovingPlayer();
+            }
+            if (serverPlayerEntity != null) {
+                serverPlayerEntity.incrementStat(Stats.ANIMALS_BRED);
+                Criteria.BRED_ANIMALS.trigger(serverPlayerEntity, this, other, kid);
+            }
+            this.setBreedingAge(6000);
+            other.setBreedingAge(6000);
+            this.resetLoveTicks();
+            other.resetLoveTicks();
             kid.setBaby(true);
-            // Boring Minecraft stuff to spawn in kid
             kid.refreshPositionAndAngles(this.getX(), this.getY(), this.getZ(), 0.0F, 0.0F);
-            ((ServerWorld) world).spawnEntityAndPassengers(kid);
-            world.sendEntityStatus(this, (byte) 18);
+            world.spawnEntityAndPassengers(kid);
+            world.sendEntityStatus(this, (byte)18);
             if (world.getGameRules().getBoolean(GameRules.DO_MOB_LOOT)) {
                 world.spawnEntity(new ExperienceOrbEntity(world, this.getX(), this.getY(), this.getZ(), this.getRandom().nextInt(7) + 1));
             }
-
-            // Wool size inheritance
-            EvolvingSheepEntity sheepKid = (EvolvingSheepEntity) kid;
-            //80% chance of getting parent's wool
-            //10% each to get one step above or below
-            int i = random.nextInt(10);
-            if (i == 0 && this.getWool() != WoolType.NO_WOOL){
-                //one below
-                sheepKid.setWool(WoolType.byId(this.getWool().getId() - 1));
-            }
-            else if (i == 1 && this.getWool() != WoolType.THICK_WOOL){
-                //one above
-                sheepKid.setWool(WoolType.byId(this.getWool().getId() + 1));
-            }
-            else {
-                sheepKid.setWool(this.getWool());
-            }
         }
     }
+
+    // Called on the creation of a child through sexual reproduction; passes genes from parents with pseudo-simulated
+    // evolutionary components such as recombination and mutation.
+    private EvolvingSheepEntity passGenes(PassiveEntity newKid, PassiveEntity other) {
+        EvolvingSheepEntity parentB = (EvolvingSheepEntity) other;
+        EvolvingSheepEntity kid = (EvolvingSheepEntity) newKid;
+        if (kid != null) {
+            // Pass WoolType:
+            // 20% chance of getting the exact same wool as one parent
+            // 50% chance of getting something between them
+            // 10% chance of getting something outside this range
+            int pAW = this.getWool().getId();
+            int pBW = parentB.getWool().getId();
+            int diff = pAW - pBW;
+            int kW;
+            int i = random.nextInt(10);
+            System.out.printf(" PARENT A: %d%n PARENT B: %d%n I: %d%n", pAW, pBW, i);
+            if (i > 0){
+                if (diff == 0) {
+                    // If parents same, inherit same
+                    kW = pAW;
+                } else if (Math.abs(diff) == 1 || i < 5){
+                    // Inherit same as one parent
+                    if (random.nextInt(2) == 1) {
+                        kW = pAW;
+                    } else {
+                        kW = pBW;
+                    }
+                } else if (Math.abs(diff) == 2){
+                    // Inherit middle between two parents
+                    kW = pAW - diff/2;
+                } else {
+                    // Inherit something in the middle (update if more wool states!)
+                    kW = pAW - (diff/3 * (random.nextInt(2) + 1));
+                }
+            }
+            else {
+                if (Math.abs(diff) == 3) {
+                    // Can't be outside range so just pick one (update if more wool states!)
+                    kW = random.nextInt(4);
+                }
+                else {
+                    // Inherit outside range of values between parents
+                    int j = random.nextInt(3 - Math.abs(diff));
+                    if (diff >= 0) {
+                        if (j < pBW) {
+                            kW = j;
+                        } else {
+                            kW = j + diff + 1;
+                        }
+                    } else {
+                        if (j < pAW) {
+                            kW = j;
+                        } else {
+                            kW = j - diff + 1;
+                        }
+                    }
+                }
+            }
+            kid.setWool(WoolType.byId(kW));
+        }
+        return kid;
+    }
+
+    //endregion
+    //region LIFE-RELATED METHODS
 
     // Called with tick; ages sheep and determines when they reproduce/die of old age
     private void increaseAge() {
@@ -204,15 +271,9 @@ implements EvolvingSheepAccess {
         System.out.printf("Life: %d%n", lifeTicks);
         System.out.printf("Age: %d%n", this.getBreedingAge());
         int p = random.nextInt(100);
-        if (p <= 20) {
+        if (p <= 15) {
             // Death in four hits
             this.damage(DamageSourceExt.BITE, 2.0F);
-        }
-        if (!this.isBaby()){
-            int i = random.nextInt(100);
-            if (i <= 15) {
-                this.giveBirth();
-            }
         }
     }
 
