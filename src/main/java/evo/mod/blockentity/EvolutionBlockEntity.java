@@ -6,6 +6,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import evo.mod.evo;
+import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 
 import java.util.Random;
@@ -13,6 +14,7 @@ import java.util.Random;
 public class EvolutionBlockEntity extends BlockEntity {
 
     //data to store
+    int count = 0;
     Random r = new Random();
     private float gene1 = 100;
     private float gene2 = 200;
@@ -21,7 +23,7 @@ public class EvolutionBlockEntity extends BlockEntity {
     private float idealMoisture; // same as above but for water (we will have to generate value for water)
     private float growthPercent; //at times when tree is doing both growing and reproducing, what percent of health is spent on growth
     private float health; //health, calculated at the start of each random tick, based on location and genetics and randomness
-    private int age = 1; //number of random ticks the tree has received
+    private int age = 0; //number of random ticks the tree has received
     private int ageProduceSeeds; //the tree will only attempt to produce new trees when age >= this value, otherwise, all resources will be spent on growth
     private int ageStopGrowing; //the tree will only attempt to grow when age >= this value, otherwise, all resources will be spent on growth
     private int height;
@@ -75,7 +77,7 @@ public class EvolutionBlockEntity extends BlockEntity {
     public int get_ageStopGrowing() {return ageStopGrowing;}
     public int get_height() {return height;}
 
-    public void increment_age(){
+    public void increment_Age(){
         age = age + 1;
         markDirty();
     }
@@ -124,5 +126,10 @@ public class EvolutionBlockEntity extends BlockEntity {
             world.setBlockState(pos,deadBush);
             markRemoved();
     }
+
+//    public static void tick(World world, BlockPos pos, BlockState state, EvolutionBlockEntity be) {
+//        System.out.println(pos);
+//
+//    }
 
 }

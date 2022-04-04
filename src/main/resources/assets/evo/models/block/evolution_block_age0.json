@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cross",
+  "textures": {
+    "cross": "evo:block/evolution_block_sapling"
+  }
+}

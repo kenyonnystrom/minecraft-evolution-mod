@@ -1,0 +1,6 @@
+{
+    "variants": {
+        "grown=false": { "model": "evo:block/evolution_block_age0"},
+        "grown=true": { "model": "evo:block/evolution_block_wood"}
+    }
+}

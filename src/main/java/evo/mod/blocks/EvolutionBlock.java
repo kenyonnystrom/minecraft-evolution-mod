@@ -8,20 +8,40 @@ import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.state.StateManager;
+import net.minecraft.state.property.BooleanProperty;
+import net.minecraft.state.property.IntProperty;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
+import evo.mod.helpers.TreeGrower;
 import java.util.Random;
 
 public class EvolutionBlock extends Block implements BlockEntityProvider {
+    //public static final IntProperty AGE = IntProperty.of("age",0, 2);
+    public static final BooleanProperty GROWN = BooleanProperty.of("grown");
+
     public EvolutionBlock(Settings settings) {
         //The actual parameters given to super() are used to initialize the inherited instance variables
         super(settings);
+        //EvolutionBlock is not grown by default
+        setDefaultState(getStateManager().getDefaultState().with(GROWN, false));
     }
+
+    /*
+    Setting up GROWN property
+    We need a BlockState to give our block a different appearance once the tree begins growing. This can be down with a property
+    We register this property of the EvolutionBlock by overriding appendProperties, and then add the GROWN property
+     */
+    @Override
+    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+        //builder.add(AGE);
+        builder.add(GROWN);
+    }
+
     /*
     The code of this method will run everytime the EvolutionBlock is right-clicked
     Great for testing new features, debugging
@@ -29,14 +49,11 @@ public class EvolutionBlock extends Block implements BlockEntityProvider {
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         if (!world.isClient) {
-            EvolutionBlockEntity blockEntity = (EvolutionBlockEntity) world.getBlockEntity(pos);
-            //testing
-            blockEntity.get_Temp();
-            String s =String.valueOf(blockEntity.getGene2());
-            player.sendMessage(new LiteralText(s), false);
-            blockEntity.updateGene2(0.1f);
+            grow_Tree(world,pos);
+            world.setBlockState(pos, state.with(GROWN, true));
+            //System.out.println(world.getBlockState(pos));
+            //world.setBlockState(pos, state.with(AGE, world.getBlockState(pos).get(AGE)+1));
         }
-
         return ActionResult.SUCCESS;
     }
 
@@ -56,7 +73,7 @@ public class EvolutionBlock extends Block implements BlockEntityProvider {
             blockEntity.die(world);
         }
         else {
-            blockEntity.increment_age();
+            blockEntity.increment_Age();
             Random r = new Random();
             cloneTree(world, pos, r, 6);
         }
@@ -95,17 +112,41 @@ public class EvolutionBlock extends Block implements BlockEntityProvider {
     }
 
     /*
-    Links block to BlockEntity
+    Grows the tree one block higher
+    Needs
+    */
+    public void grow_Tree(World world, BlockPos pos){
+        if (world.getBlockState(pos).get(GROWN)){
+            //Get associated BlockEntity
+            EvolutionBlockEntity blockEntity = (EvolutionBlockEntity) world.getBlockEntity(pos);
+            //Increase its age by 1
+            blockEntity.increment_Age();
+            //Add age to position of block
+            //Age = height of tree trunk
+            int curr_age = blockEntity.get_Age();
+            System.out.println(curr_age);
+            if (curr_age>8){
+                TreeGrower.kill_Tree(world, pos);
+            }
+            else {
+                TreeGrower.grow_Trunk(world, pos, curr_age);
+                TreeGrower.grow_Leaves(world, pos, curr_age);
+            }
+        }
+    }
+
+    /*
+    Links EvolutionBlock to EvolutionBlockEntity
     */
     @Override
     public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
         return new EvolutionBlockEntity(pos, state);
     }
 
-    @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-        return checkType(type, evo.EVOLUTION_ENTITY, (world1, pos, state1, be) -> EvolutionBlockEntity.tick(world1, pos, state1, be));
-    }
+//    @Override
+//    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
+//        return checkType(type, evo.EVOLUTION_ENTITY, (world1, pos, state1, be) -> EvolutionBlockEntity.tick(world1, pos, state1, be));
+//    }
 
 
 
