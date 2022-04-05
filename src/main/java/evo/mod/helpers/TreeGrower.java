@@ -1,12 +1,14 @@
 package evo.mod.helpers;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 
 public class TreeGrower {
     public static void grow_Trunk(World world, BlockPos pos, int height){
+        //can add max height here if needed
         BlockState wood_block = Blocks.OAK_LOG.getDefaultState();
         BlockPos wood_pos = pos.add(0, height, 0);
         world.setBlockState(wood_pos, wood_block);
@@ -49,10 +51,10 @@ public class TreeGrower {
     }
 
     public static void grow_Leaves(World world, BlockPos pos, int height) {
-        BlockState leaves_block = Blocks.OAK_LEAVES.getDefaultState();
+        BlockState leaves_block = Blocks.OAK_LEAVES.getDefaultState().with(Properties.PERSISTENT, true);
         if (height < 4) {
             grow_Small_Leaves(world, pos, height, leaves_block);
-        } else{
+        } else{ // can add max height here if needed
             grow_Large_Leaves(world, pos, height, leaves_block);
         }
     }
