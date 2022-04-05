@@ -52,7 +52,13 @@ public class EvolutionBlockEntity extends BlockEntity {
         ageStopGrowing = tag.getInt("ageStopGrowing");
         height = tag.getInt("height");
     }
-
+    public void copyValues(EvolutionBlockEntity parent){
+        idealTemp = parent.get_idealTemp();
+        idealMoisture = parent.get_idealMoisture();
+        growthPercent = parent.get_growthPercent();
+        ageProduceSeeds = parent.get_ageProduceSeeds();
+        ageStopGrowing = parent.get_ageStopGrowing();
+    }
 
     public float get_idealTemp() {return idealTemp;}
     public float get_idealMoisture() {return idealMoisture;}
@@ -79,8 +85,11 @@ public class EvolutionBlockEntity extends BlockEntity {
     // currently thinking health should range approximately 0 to 3. decreases when tree is older, and temp and moisture levels are more different from ideal
     public float get_Health(){
         //placeholder for improved version
-        System.out.printf("idealTemp:%f Temp:%f idealMoisture:%f Moisture:%f age:%d\n", idealTemp, get_Temp(), idealMoisture, get_Moisture(), age);
-        return (float) ((13-age)/10);
+        float temp_dist = (float) Math.pow(((idealTemp - get_Temp())*8), 2.0F);
+        float moisture_dist = (float) Math.pow(((idealMoisture - get_Moisture())*8), 2.0F);
+        float health = (30 - 3*age - temp_dist - moisture_dist)/10;
+        System.out.printf("health:%f idealTemp:%f Temp:%f temp_dist:%f idealMoisture:%f Moisture:%f moist_dif:%f age:%d \n", health, idealTemp, get_Temp(), temp_dist, idealMoisture, get_Moisture(),moisture_dist, age);
+        return health;
     }
 
     public int get_num_seeds(float total_health, Random random){
@@ -146,6 +155,8 @@ public class EvolutionBlockEntity extends BlockEntity {
     public void mutate(){
         age = 0;
         height = 0;
+        System.out.printf("before:%f \n", idealTemp);
+        idealTemp = .5F;
         //mutation to be added here, currently making exact clones
         markDirty();
     }

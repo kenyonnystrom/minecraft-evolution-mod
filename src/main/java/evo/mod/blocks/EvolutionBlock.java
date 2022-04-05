@@ -88,7 +88,7 @@ public class EvolutionBlock extends Block implements BlockEntityProvider {
            }
            //attempt to produce offspring a number of times determined by health and age
            for(int i = 0; i < blockEntity.get_num_seeds(health, random);i++){
-               cloneTree(world, pos, random, blockEntity.get_height());
+               cloneTree(world, pos, random, blockEntity.get_height(), blockEntity);
            }
         }
     }
@@ -97,7 +97,7 @@ public class EvolutionBlock extends Block implements BlockEntityProvider {
     Clones EvolutionBlock at provided position to a nearby location
     Copies parent's genome - modifies it by specific updateGeneName BlockEntity methods
     */
-    public void cloneTree(ServerWorld world, BlockPos pos, Random random,int height){
+    public void cloneTree(ServerWorld world, BlockPos pos, Random random,int height,EvolutionBlockEntity parent){
         int x_offset = (int) Math.round(random.nextGaussian()*height*4);
         int z_offset = (int) Math.round(random.nextGaussian()*height*4);
         BlockPos checkPos = new BlockPos(pos.getX() + x_offset, pos.getY() +height,pos.getZ() + z_offset);
@@ -120,6 +120,7 @@ public class EvolutionBlock extends Block implements BlockEntityProvider {
             BlockState newTree = this.getDefaultState();
             world.setBlockState(newTreePos, newTree);
             EvolutionBlockEntity blockEntity = (EvolutionBlockEntity) world.getBlockEntity(newTreePos);
+            blockEntity.copyValues(parent);
             blockEntity.mutate();
             //blockEntity.update_IdealTemp(0.8F + (random.nextFloat() * 0.4F));
         }
