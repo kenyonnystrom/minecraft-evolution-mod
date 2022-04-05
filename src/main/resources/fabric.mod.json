@@ -17,7 +17,7 @@
   },
 
   "license": "CC0-1.0",
-  "icon": "assets/evolution/icon.png",
+  "icon": "assets/evo/icon.png",
 
   "environment": "*",
   "entrypoints": {
@@ -26,7 +26,9 @@
     ]
   },
   "mixins": [
-    "evo.mixins.json"
+    "evo.sheep.mixins.json",
+    "evo.rendering.mixins.json",
+    "evo.wolf.mixins.json"
   ],
 
   "depends": {
