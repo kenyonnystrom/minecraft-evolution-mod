@@ -14,6 +14,7 @@ import net.minecraft.util.Hand;
 import java.util.EnumSet;
 /*
 This class is modified from MeleeAttack goal
+Based on code from Silas Zhao
  */
 public class AttackSheepGoal extends Goal {
     protected final PathAwareEntity mob;

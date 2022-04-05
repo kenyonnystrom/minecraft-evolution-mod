@@ -10,6 +10,10 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+/*
+Based on code from Silas Zhao
+*/
+
 @Mixin(WolfEntity.class)
 public abstract class WolfAttackSheepGoalMixin extends AnimalEntity {
 
