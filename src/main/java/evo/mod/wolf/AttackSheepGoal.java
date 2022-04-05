@@ -6,7 +6,7 @@ import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.ai.pathing.Path;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.mob.PathAwareEntity;
-import net.minecraft.entity.passive.SheepEntity;
+//import net.minecraft.entity.passive.SheepEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.util.Hand;
@@ -123,12 +123,15 @@ public class AttackSheepGoal extends Goal {
 
         double d = this.getSquaredMaxAttackDistance(target);
         double difference = 1;
+
+        /*
         //this means the wolf encountered a sheep
         if(target instanceof SheepEntity){
             //System.out.println("found an sheep entity");
             SheepEntityExt sheep = (SheepEntityExt)target;
             difference = sheep.getDifference() * 2; //difference can be 0 - 4/3
         }
+        */
         if (squaredDistance <= d && this.field_24667 <= 0) {
             this.method_28346();
             this.mob.swingHand(Hand.MAIN_HAND);
@@ -154,7 +157,7 @@ public class AttackSheepGoal extends Goal {
     protected void method_28346() {
         this.field_24667 = 20;
     }
-
+    /*
     protected boolean method_28347() {
         return this.field_24667 <= 0;
     }
@@ -166,7 +169,7 @@ public class AttackSheepGoal extends Goal {
     protected int method_28349() {
         return 20;
     }
-
+    */
     protected double getSquaredMaxAttackDistance(LivingEntity entity) {
         return (double)(this.mob.getWidth() * 2.0F * this.mob.getWidth() * 2.0F + entity.getWidth());
     }
