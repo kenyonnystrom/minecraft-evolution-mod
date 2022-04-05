@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "evo.mod.sheep.mixins",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+  ],
+  "client": [
+    "SetAngerTimeMixin",
+    "WolfAttackSheepGoalMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
