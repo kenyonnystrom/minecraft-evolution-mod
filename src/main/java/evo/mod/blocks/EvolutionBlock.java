@@ -7,11 +7,12 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.IntProperty;
-import net.minecraft.text.LiteralText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
@@ -76,6 +77,10 @@ public class EvolutionBlock extends Block implements BlockEntityProvider {
         //every random tick there is a chance that the tree dies, greater chance the lower the health
         if (health < random.nextFloat()){
             //tree dies so remove blocks, delete blockEntity, put dead bush blockstate
+            for (int i=1; i<blockEntity.get_height(); i+=1){
+                dropStack(world, pos.add(0,i,0), new ItemStack(Items.OAK_LOG, 1));
+                dropStack(world, pos.add(0,i,0), new ItemStack(Items.STICK, 1));
+            }
             blockEntity.die(world);
             TreeGrower.kill_Tree(world, pos);
         }
