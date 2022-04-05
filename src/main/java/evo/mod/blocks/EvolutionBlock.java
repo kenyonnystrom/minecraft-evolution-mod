@@ -68,14 +68,28 @@ public class EvolutionBlock extends Block implements BlockEntityProvider {
         int action;
         EvolutionBlockEntity blockEntity = (EvolutionBlockEntity) world.getBlockEntity(pos);
 
-        //should the tree die - not well adapted or too old
-        if (blockEntity.get_TempDist() > 6 || blockEntity.get_Age() > 50){
+        //increment age, age = number of random ticks this tree has received
+        blockEntity.increment_Age();
+        //get health based on environment and genetics
+        float health = blockEntity.get_Health();
+
+        //every random tick there is a chance that the tree dies, greater chance the lower the health
+        if (health < random.nextFloat()){
+            //tree dies so remove blocks, delete blockEntity, put dead bush blockstate
             blockEntity.die(world);
+            TreeGrower.kill_Tree(world, pos);
         }
+        //if tree survives
         else {
-            blockEntity.increment_Age();
-            Random r = new Random();
-            cloneTree(world, pos, r, 6);
+            //grow a number of blocks determined by health and age
+           for(int i = 0; i < blockEntity.get_grow_amt(health,random); i++){
+               world.setBlockState(pos, state.with(GROWN, true));
+               grow_Tree(world,pos);
+           }
+           //attempt to produce offspring a number of times determined by health and age
+           for(int i = 0; i < blockEntity.get_num_seeds(health, random);i++){
+               cloneTree(world, pos, random, blockEntity.get_height());
+           }
         }
     }
 
@@ -84,8 +98,8 @@ public class EvolutionBlock extends Block implements BlockEntityProvider {
     Copies parent's genome - modifies it by specific updateGeneName BlockEntity methods
     */
     public void cloneTree(ServerWorld world, BlockPos pos, Random random,int height){
-        int x_offset = (int) Math.round(random.nextGaussian()*height);
-        int z_offset = (int) Math.round(random.nextGaussian()*height);
+        int x_offset = (int) Math.round(random.nextGaussian()*height*4);
+        int z_offset = (int) Math.round(random.nextGaussian()*height*4);
         BlockPos checkPos = new BlockPos(pos.getX() + x_offset, pos.getY() +height,pos.getZ() + z_offset);
         int status = 0;
         while (status < 2){
@@ -94,7 +108,7 @@ public class EvolutionBlock extends Block implements BlockEntityProvider {
                 status = 1;
                 checkPos = checkPos.down();
             }
-            else if ((status == 1) && (blockState.isOf(Blocks.FARMLAND) || blockState.isOf(Blocks.DIRT) || blockState.isOf(Blocks.COARSE_DIRT) || blockState.isOf(Blocks.PODZOL) || blockState.isOf(Blocks.GRASS_BLOCK))){
+            else if ((status == 1) && (blockState.isOf(Blocks.FARMLAND) || blockState.isOf(Blocks.DIRT) || blockState.isOf(Blocks.COARSE_DIRT) || blockState.isOf(Blocks.PODZOL) || blockState.isOf(Blocks.GRASS_BLOCK) || blockState.isOf(Blocks.SAND) || blockState.isOf(Blocks.SNOW_BLOCK))){
                 status = 2;
             }
             else{
@@ -106,8 +120,8 @@ public class EvolutionBlock extends Block implements BlockEntityProvider {
             BlockState newTree = this.getDefaultState();
             world.setBlockState(newTreePos, newTree);
             EvolutionBlockEntity blockEntity = (EvolutionBlockEntity) world.getBlockEntity(newTreePos);
-
-            blockEntity.update_IdealTemp(0.8F + (random.nextFloat() * 0.4F));
+            blockEntity.mutate();
+            //blockEntity.update_IdealTemp(0.8F + (random.nextFloat() * 0.4F));
         }
     }
 
@@ -119,19 +133,16 @@ public class EvolutionBlock extends Block implements BlockEntityProvider {
         if (world.getBlockState(pos).get(GROWN)){
             //Get associated BlockEntity
             EvolutionBlockEntity blockEntity = (EvolutionBlockEntity) world.getBlockEntity(pos);
-            //Increase its age by 1
-            blockEntity.increment_Age();
-            //Add age to position of block
-            //Age = height of tree trunk
-            int curr_age = blockEntity.get_Age();
-            System.out.println(curr_age);
-            if (curr_age>8){
-                TreeGrower.kill_Tree(world, pos);
-            }
-            else {
-                TreeGrower.grow_Trunk(world, pos, curr_age);
-                TreeGrower.grow_Leaves(world, pos, curr_age);
-            }
+            //Increase its height by 1
+            blockEntity.increment_Height();
+            //Add height to position of block to get top of trunk
+            //curr_height = height of tree trunk
+            int curr_height = blockEntity.get_height();
+            //System.out.println(curr_height);
+
+            TreeGrower.grow_Trunk(world, pos, curr_height);
+            TreeGrower.grow_Leaves(world, pos, curr_height);
+
         }
     }
 
