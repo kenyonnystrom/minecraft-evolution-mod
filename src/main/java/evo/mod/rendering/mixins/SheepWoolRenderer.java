@@ -31,11 +31,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(SheepWoolFeatureRenderer.class)
 public abstract class SheepWoolRenderer extends FeatureRenderer<SheepEntity, SheepEntityModel<SheepEntity>> {
-    private static final Identifier SHAVED = new Identifier(Evo.MOD_ID, "textures/sheep_no_wool.png");
-    private static final Identifier THIN = new Identifier(Evo.MOD_ID, "textures/sheep_thin_wool.png");
+    private static final Identifier SHAVED = new Identifier(evo.MOD_ID, "textures/sheep_no_wool.png");
+    private static final Identifier THIN = new Identifier(evo.MOD_ID, "textures/sheep_thin_wool.png");
     private static final Identifier STANDARD = new Identifier("textures/entity/sheep/sheep_fur.png");
-    private static final Identifier THICK = new Identifier(Evo.MOD_ID, "textures/thick_wool.png");
-    private static final Identifier SHEARED = new Identifier(Evo.MOD_ID, "textures/sheep_sheared.png");
+    private static final Identifier THICK = new Identifier(evo.MOD_ID, "textures/thick_wool.png");
+    private static final Identifier SHEARED = new Identifier(evo.MOD_ID, "textures/sheep_sheared.png");
     private SheepEntityModel<SheepEntity> baseModel;
     private SheepWoolEntityModel<SheepEntity> woolModel;
     private SheepThickWoolEntityModel<SheepEntity> thickModel;
