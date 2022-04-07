@@ -12,6 +12,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /*
 Based on code from Silas Zhao
+Sets the new AttackSheepGoal as a higher priority
+than normal melee attack.
 */
 
 @Mixin(WolfEntity.class)

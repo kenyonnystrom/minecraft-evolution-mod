@@ -6,6 +6,7 @@
   "mixins": [
   ],
   "client": [
+    "WolfAttackSheepGoalMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -15,6 +15,7 @@ import java.util.EnumSet;
 /*
 This class is modified from MeleeAttack goal
 Based on code from Silas Zhao
+Does not base attacks off of color but can be edited to
  */
 public class AttackSheepGoal extends Goal {
     protected final PathAwareEntity mob;
