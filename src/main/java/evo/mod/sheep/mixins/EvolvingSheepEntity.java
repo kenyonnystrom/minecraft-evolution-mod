@@ -288,8 +288,8 @@ implements EvolvingSheepAccess {
         super.onDeath(source);
         try {
             DamageSourceExt s = (DamageSourceExt) source;
-            // Comment out the following line if you are getting tired of sheep death messages
-            ChatExt.sendText(s.getDeathMessage(this));
+            // Uncomment the following line if you want sheep death messages
+            // ChatExt.sendText(s.getDeathMessage(this));
         } catch (Exception e){
             // Don't print anything
         }
