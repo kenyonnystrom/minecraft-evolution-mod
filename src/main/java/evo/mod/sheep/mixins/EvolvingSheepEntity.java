@@ -5,6 +5,7 @@
 
 package evo.mod.sheep.mixins;
 
+import evo.mod.features.ChatExt;
 import evo.mod.features.DamageSourceExt;
 
 import evo.mod.sheep.EvolvingSheepAccess;
@@ -14,6 +15,7 @@ import net.minecraft.entity.EntityData;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ExperienceOrbEntity;
 import net.minecraft.entity.SpawnReason;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
@@ -26,6 +28,8 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 
 import net.minecraft.stat.Stats;
+import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.math.BlockPos;
 
 import net.minecraft.world.GameRules;
@@ -46,12 +50,11 @@ extends AnimalEntity
 implements EvolvingSheepAccess {
     private int realTick = 100;
     private int lifeTicks = 0;
+    private int grassCount;
     private static final TrackedData<Byte> WOOL;
 
     // Constructor
-    public EvolvingSheepEntity(EntityType<? extends AnimalEntity> entityType, World world) {
-        super(entityType, world);
-    }
+    public EvolvingSheepEntity(EntityType<? extends AnimalEntity> entityType, World world) { super(entityType, world); }
 
     //region WOOL-RELATED METHODS
 
@@ -70,6 +73,11 @@ implements EvolvingSheepAccess {
     public void setWool(WoolType wool) {
         byte b = this.dataTracker.get(WOOL);
         this.dataTracker.set(WOOL, (byte)(b & 240 | wool.getId() & 15));
+    }
+
+    // Overwrite Entity class method so that the default name can be determined in the lang file
+    protected Text getDefaultName() {
+        return new TranslatableText("entity.minecraft.sheep." + this.getWool().getName());
     }
 
     // Gets wool type of this sheep from data tracker, returning WoolType
@@ -264,16 +272,39 @@ implements EvolvingSheepAccess {
     //endregion
     //region LIFE-RELATED METHODS
 
+    @Inject(method="onEatingGrass", at = @At("HEAD"))
+    public void onEatingGrass(CallbackInfo info) {
+        this.grassCount++;
+        if (grassCount >= 2) {
+            if (!this.isBaby()) {
+                if (!this.world.isClient) {
+                    setLoveTicks(60000);
+                }
+            }
+        }
+    }
+
+    public void onDeath(DamageSource source) {
+        super.onDeath(source);
+        try {
+            DamageSourceExt s = (DamageSourceExt) source;
+            // Comment out the following line if you are getting tired of sheep death messages
+            ChatExt.sendText(s.getDeathMessage(this));
+        } catch (Exception e){
+            // Don't print anything
+        }
+    }
+
     // Called with tick; ages sheep and determines when they reproduce/die of old age
     private void increaseAge() {
-        lifeTicks++;
-        this.growUp(200);
-        System.out.printf("Life: %d%n", lifeTicks);
-        System.out.printf("Age: %d%n", this.getBreedingAge());
-        int p = random.nextInt(100);
-        if (p <= 15) {
-            // Death in four hits
-            this.damage(DamageSourceExt.BITE, 2.0F);
+        if (lifeTicks < 10) {
+            lifeTicks ++;
+            this.growUp(200);
+        } else {
+            lifeTicks += random.nextInt(2);
+            if (lifeTicks > 15) {
+                this.damage(DamageSourceExt.OLD_AGE, 20F);
+            }
         }
     }
 
