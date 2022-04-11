@@ -9,6 +9,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /*
 Based on code from Silas Zhao
+
+Not needed at the moment but could be
+useful for future groups.
  */
 @Mixin(WolfEntity.class)
 public abstract class SetAngerTimeMixin extends AnimalEntity {

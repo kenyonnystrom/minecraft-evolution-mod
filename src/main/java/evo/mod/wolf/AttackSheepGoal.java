@@ -15,6 +15,10 @@ import java.util.EnumSet;
 /*
 This class is modified from MeleeAttack goal
 Based on code from Silas Zhao
+
+Can be changed to allow wolves to attack based
+on sheep color, at the moment code is
+commented out preventing this.
  */
 public class AttackSheepGoal extends Goal {
     protected final PathAwareEntity mob;
