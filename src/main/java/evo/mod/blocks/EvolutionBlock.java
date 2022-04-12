@@ -75,7 +75,10 @@ public class EvolutionBlock extends Block implements BlockEntityProvider {
         float health = blockEntity.get_Health();
 
         //every random tick there is a chance that the tree dies, greater chance the lower the health
-        if (health < random.nextFloat()){
+        //old verion
+        //if (health < random.nextFloat()){
+        //new version intended to add more evolutionary pressure
+        if (health < random.nextGaussian()+1){
             //tree dies so remove blocks, delete blockEntity, put dead bush blockstate
             for (int i=1; i<blockEntity.get_height(); i+=1){
                 dropStack(world, pos.add(0,i,0), new ItemStack(Items.OAK_LOG, 1));

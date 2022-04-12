@@ -18,10 +18,10 @@ public class EvolutionBlockEntity extends BlockEntity {
     Random r = new Random();
     private float idealTemp = -0.7F + (r.nextFloat() * 2.7F); //health gets worse the farther actual temp it is from this value
     private float idealMoisture = r.nextFloat(); // same as above but for water (we will have to generate value for water)
-    private float growthPercent = .5F; //r.nextFloat(); //at times when tree is doing both growing and reproducing, what percent of health is spent on growth
+    private float growthPercent = r.nextFloat(); //at times when tree is doing both growing and reproducing, what percent of health is spent on growth
     private int age = 0; //number of random ticks the tree has received
-    private int ageProduceSeeds =0;// (int) (4 * r.nextFloat()); //the tree will only attempt to produce new trees when age >= this value, otherwise, all resources will be spent on growth
-    private int ageStopGrowing = 4;//4 + (int) (4 * r.nextFloat()); //the tree will only attempt to grow when age >= this value, otherwise, all resources will be spent on growth
+    private int ageProduceSeeds =(int) (4 * r.nextFloat()); //the tree will only attempt to produce new trees when age >= this value, otherwise, all resources will be spent on growth
+    private int ageStopGrowing = 4 + (int) (4 * r.nextFloat()); //the tree will only attempt to grow when age >= this value, otherwise, all resources will be spent on growth
     private int height = 0;
     //constructor
     public EvolutionBlockEntity(BlockPos pos, BlockState state) {
@@ -108,7 +108,9 @@ public class EvolutionBlockEntity extends BlockEntity {
                 unrounded = total_health * (1F - growthPercent);
             }
         }
-        //floor of unrounded value (NEED TO MAKE SURE THAT CASTING TO INT TAKES FLOOR)
+        // attempting to control growth simply by cutting num of seeds in half
+        //unrounded = unrounded/2;
+        //floor of unrounded value
         int rounded = (int) unrounded;
         //we are rounding probabilistically, if unrounded = 1.4 than 40% of the time rounded = 2, 6-% of the time rounded = 1
         if (unrounded % 1 > random.nextFloat()){
@@ -155,9 +157,24 @@ public class EvolutionBlockEntity extends BlockEntity {
     public void mutate(){
         age = 0;
         height = 0;
-        System.out.printf("before:%f \n", idealTemp);
-        idealTemp = .5F;
-        //mutation to be added here, currently making exact clones
+        //By adding a normally distributed value with sd = 1/3 there is roughly 86% chance it stays the same, 7% chance it increases, 7% chance it decreases
+        ageStopGrowing = (int) Math.round(ageStopGrowing + r.nextGaussian()/3);
+        //"clamping" value to be within allowed range 4-8
+        ageStopGrowing = Math.max(4, Math.min(8,ageStopGrowing));
+        ageProduceSeeds = (int) Math.round(ageProduceSeeds + r.nextGaussian()/3);
+        //"clamping" value to be within allowed range 1-4
+        ageProduceSeeds = Math.max(1, Math.min(4,ageProduceSeeds));
+
+        //changing float values with random distribution according to mutation rate
+        float idealTempMutationRate = 0.05F;
+        float idealMoistureMutationRate = 0.03F;
+        float growthPrecentMutationRate = 0.03F;
+        idealTemp = idealTemp + idealTempMutationRate * (float) r.nextGaussian();
+        idealMoisture = idealMoisture + idealMoistureMutationRate * (float) r.nextGaussian();
+        growthPercent = growthPercent + growthPrecentMutationRate * (float) r.nextGaussian();
+        //clamping growthpercent between 0-1 so it makes sense as a percent
+        // idealTemp and idealMoisture are unclamped since theoretically they should be clamped by evolutionary pressure
+        growthPercent = Math.max(0.0F, Math.min(1.0F,growthPercent));
         markDirty();
     }
 
