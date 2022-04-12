@@ -32,6 +32,7 @@ import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.math.BlockPos;
 
+import net.minecraft.util.math.Box;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.ServerWorldAccess;
@@ -42,7 +43,9 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.*;
 
+import java.util.List;
 import java.util.Random;
+import java.util.function.Predicate;
 
 @Mixin(SheepEntity.class)
 public abstract class EvolvingSheepEntity
@@ -306,6 +309,32 @@ implements EvolvingSheepAccess {
                 this.damage(DamageSourceExt.OLD_AGE, 20F);
             }
         }
+        this.checkWolfThreshold();
+    }
+
+    // Called when sheep age (on tick), determines if wolves should spawn or not
+    private void checkWolfThreshold() {
+        BlockPos pos = super.getBlockPos();
+        int sheepX = pos.getX();
+        int sheepY = pos.getY();
+        int sheepZ = pos.getZ();
+        Box areaAroundSheep = new Box((sheepX), (sheepY), (sheepZ), (sheepX + 20), (sheepY + 20), (sheepZ + 20));
+
+        //get list of all entities of a certain type
+        List<SheepEntity> listOfEnts = world.getEntitiesByType(EntityType.SHEEP, areaAroundSheep, Predicate.isEqual(this));
+
+        //get length of list
+        int numSheep = listOfEnts.size();
+        System.out.println(numSheep);
+
+        //check against threshold
+        int upperThreshold = 10;
+        if (numSheep >= upperThreshold){
+            // spawn sheep
+            System.out.println("spawn WOLVES!!!");
+        }
+        //despawn wolves if lower
+
     }
 
     // Extension of mobTick in superclass, ticks every 0.2 seconds unadjusted
