@@ -11,10 +11,7 @@ import evo.mod.features.DamageSourceExt;
 import evo.mod.sheep.EvolvingSheepAccess;
 import evo.mod.features.WoolType;
 import net.minecraft.advancement.criterion.Criteria;
-import net.minecraft.entity.EntityData;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.ExperienceOrbEntity;
-import net.minecraft.entity.SpawnReason;
+import net.minecraft.entity.*;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
@@ -309,11 +306,11 @@ implements EvolvingSheepAccess {
                 this.damage(DamageSourceExt.OLD_AGE, 20F);
             }
         }
-        this.checkWolfThreshold();
     }
 
     // Called when sheep age (on tick), determines if wolves should spawn or not
     private void checkWolfThreshold() {
+        System.out.println("in wolf check");
         BlockPos pos = super.getBlockPos();
         int sheepX = pos.getX();
         int sheepY = pos.getY();
@@ -321,20 +318,23 @@ implements EvolvingSheepAccess {
         Box areaAroundSheep = new Box((sheepX), (sheepY), (sheepZ), (sheepX + 20), (sheepY + 20), (sheepZ + 20));
 
         //get list of all entities of a certain type
-        List<SheepEntity> listOfEnts = world.getEntitiesByType(EntityType.SHEEP, areaAroundSheep, Predicate.isEqual(this));
+        List<SheepEntity> listOfEnts = world.getEntitiesByType(EntityType.SHEEP, areaAroundSheep, Predicate.isEqual(EntityType.SHEEP));
 
         //get length of list
         int numSheep = listOfEnts.size();
-        System.out.println(numSheep);
+        System.out.printf("number of sheep: %d",  numSheep);
 
         //check against threshold
-        int upperThreshold = 10;
+        int upperThreshold = 12;
+        int lowerThreshold = 3;
         if (numSheep >= upperThreshold){
-            // spawn sheep
+            // spawn wolves
             System.out.println("spawn WOLVES!!!");
         }
-        //despawn wolves if lower
-
+        else if (numSheep <= lowerThreshold){
+            //despawn wolves
+            System.out.println("despawn wolves");
+        }
     }
 
     // Extension of mobTick in superclass, ticks every 0.2 seconds unadjusted
@@ -347,6 +347,8 @@ implements EvolvingSheepAccess {
 
             this.feelTemperature();
             this.increaseAge();
+            this.checkWolfThreshold();
+            //System.out.println("post wolf check?");
             System.out.println(this.getWool().getName());
         }
     }
