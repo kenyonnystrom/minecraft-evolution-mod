@@ -310,8 +310,10 @@ implements EvolvingSheepAccess {
     }
 
     // Called when sheep age (on tick), determines if wolves should spawn or not
+    // Could be changed to work off of chunk tick instead
     private void checkWolfThreshold() {
         System.out.println("in wolf check");
+        // create box around sheep to check
         BlockPos pos = super.getBlockPos();
         int sheepX = pos.getX();
         int sheepY = pos.getY();
@@ -330,6 +332,7 @@ implements EvolvingSheepAccess {
         int lowerThreshold = 4;
         if (numSheep >= upperThreshold){
             //spawn 2 wolves
+
             //System.out.println("spawn WOLVES!!!");
 
         }
