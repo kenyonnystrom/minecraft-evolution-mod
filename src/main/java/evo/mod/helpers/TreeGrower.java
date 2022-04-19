@@ -50,8 +50,9 @@ public class TreeGrower {
         world.setBlockState(pos.add(0, height+1, 0), leaves_block);
     }
 
-    public static void grow_Leaves(World world, BlockPos pos, int height) {
-        BlockState leaves_block = Blocks.OAK_LEAVES.getDefaultState().with(Properties.PERSISTENT, true);
+    public static void grow_Leaves(World world, BlockPos pos, int height, BlockState leaves_block) {
+        //below line is deprecated, was used before we made leaf color change by idealTemp
+        //BlockState leaves_block = Blocks.OAK_LEAVES.getDefaultState().with(Properties.PERSISTENT, true);
         if (height < 4) {
             grow_Small_Leaves(world, pos, height, leaves_block);
         } else{ // can add max height here if needed

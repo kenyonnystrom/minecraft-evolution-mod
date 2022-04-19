@@ -4,6 +4,7 @@ import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.BlockPos;
 import evo.mod.evo;
 import net.minecraft.world.World;
@@ -85,10 +86,12 @@ public class EvolutionBlockEntity extends BlockEntity {
     // currently thinking health should range approximately 0 to 3. decreases when tree is older, and temp and moisture levels are more different from ideal
     public float get_Health(){
         //placeholder for improved version
-        float temp_dist = (float) Math.pow(((idealTemp - get_Temp())*8), 2.0F);
-        float moisture_dist = (float) Math.pow(((idealMoisture - get_Moisture())*8), 2.0F);
+        float temp_dist = (float) Math.pow(((idealTemp - get_Temp())*10), 2.0F);
+        float moisture_dist = (float) Math.pow(((idealMoisture - get_Moisture())*10), 2.0F);
         float health = (30 - 3*age - temp_dist - moisture_dist)/10;
-        System.out.printf("health:%f idealTemp:%f Temp:%f temp_dist:%f idealMoisture:%f Moisture:%f moist_dif:%f age:%d \n", health, idealTemp, get_Temp(), temp_dist, idealMoisture, get_Moisture(),moisture_dist, age);
+        float light = (float) world.getLightLevel(pos);
+
+        System.out.printf("health:%f idealTemp:%f Temp:%f temp_dist:%f idealMoisture:%f Moisture:%f moist_dif:%f age:%d light:%f\n", health, idealTemp, get_Temp(), temp_dist, idealMoisture, get_Moisture(),moisture_dist, age, light);
         return health;
     }
 
@@ -142,6 +145,30 @@ public class EvolutionBlockEntity extends BlockEntity {
             rounded ++;
         }
         return rounded;
+    }
+
+    public BlockState get_Leaf_Block(){
+        if (idealTemp < 0.0F){
+            return Blocks.SPRUCE_LEAVES.getDefaultState().with(Properties.PERSISTENT, true);
+        }
+        else if (idealTemp < 0.5F){
+            return Blocks.BIRCH_LEAVES.getDefaultState().with(Properties.PERSISTENT, true);
+        }
+        else if (idealTemp < 0.75F){
+            return Blocks.ACACIA_LEAVES.getDefaultState().with(Properties.PERSISTENT, true);
+        }
+        else if (idealTemp < 0.1F){
+            return Blocks.DARK_OAK_LEAVES.getDefaultState().with(Properties.PERSISTENT, true);
+        }
+        else if (idealTemp < 1.3F){
+            return Blocks.OAK_LEAVES.getDefaultState().with(Properties.PERSISTENT, true);
+        }
+        else if (idealTemp < 1.6F){
+            return Blocks.JUNGLE_LEAVES.getDefaultState().with(Properties.PERSISTENT, true);
+        }
+        else{
+            return Blocks.AZALEA_LEAVES.getDefaultState().with(Properties.PERSISTENT, true);
+        }
     }
 
     public float get_Temp() {

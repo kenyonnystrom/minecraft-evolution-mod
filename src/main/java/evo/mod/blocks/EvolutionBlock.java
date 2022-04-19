@@ -150,7 +150,7 @@ public class EvolutionBlock extends Block implements BlockEntityProvider {
             //System.out.println(curr_height);
 
             TreeGrower.grow_Trunk(world, pos, curr_height);
-            TreeGrower.grow_Leaves(world, pos, curr_height);
+            TreeGrower.grow_Leaves(world, pos, curr_height, blockEntity.get_Leaf_Block());
 
         }
     }
