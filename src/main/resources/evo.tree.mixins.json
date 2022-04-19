@@ -1,12 +1,12 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "evo.mod.sheep.mixins",
+  "package": "evo.mod.tree.mixins",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
   ],
   "client": [
-    "EvolvingSheepEntity"
+    "TreeManager"
   ],
   "injectors": {
     "defaultRequire": 1
