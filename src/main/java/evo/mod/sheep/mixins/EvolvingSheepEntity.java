@@ -21,6 +21,7 @@ import net.minecraft.entity.passive.PassiveEntity;
 import net.minecraft.entity.passive.SheepEntity;
 
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 
@@ -315,24 +316,25 @@ implements EvolvingSheepAccess {
         int sheepX = pos.getX();
         int sheepY = pos.getY();
         int sheepZ = pos.getZ();
-        Box areaAroundSheep = new Box((sheepX), (sheepY), (sheepZ), (sheepX + 20), (sheepY + 20), (sheepZ + 20));
+        Box areaAroundSheep = new Box((sheepX-20), (sheepY-20), (sheepZ-20), (sheepX + 20), (sheepY + 20), (sheepZ + 20));
 
         //get list of all entities of a certain type
-        List<SheepEntity> listOfEnts = world.getEntitiesByType(EntityType.SHEEP, areaAroundSheep, Predicate.isEqual(EntityType.SHEEP));
+        List<SheepEntity> listOfEnts = world.getEntitiesByType(EntityType.SHEEP, areaAroundSheep, EntityPredicates.VALID_ENTITY);
 
         //get length of list
         int numSheep = listOfEnts.size();
         System.out.printf("number of sheep: %d",  numSheep);
 
         //check against threshold
-        int upperThreshold = 12;
-        int lowerThreshold = 3;
+        int upperThreshold = 15;
+        int lowerThreshold = 4;
         if (numSheep >= upperThreshold){
-            // spawn wolves
-            System.out.println("spawn WOLVES!!!");
+            //spawn 2 wolves
+            //System.out.println("spawn WOLVES!!!");
+
         }
         else if (numSheep <= lowerThreshold){
-            //despawn wolves
+            //despawn any wolves
             System.out.println("despawn wolves");
         }
     }
