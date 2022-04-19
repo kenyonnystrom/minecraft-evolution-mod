@@ -6,11 +6,8 @@
   "mixins": [
   ],
   "client": [
-<<<<<<< HEAD:src/main/resources/evo.sheep.mixins.json
-    "EvolvingSheepEntity"
-=======
+    "EvolvingSheepEntity",
     "TreeManager"
->>>>>>> team-trees:src/main/resources/evo.mixins.json
   ],
   "injectors": {
     "defaultRequire": 1
