@@ -1,23 +1,26 @@
 package evo.mod.mixins;
 
 
+import evo.mod.evo;
 import net.minecraft.world.biome.GenerationSettings;
 import net.minecraft.world.gen.GenerationStep;
-import net.minecraft.world.gen.feature.DefaultBiomeFeatures;
-import net.minecraft.world.gen.feature.VegetationPlacedFeatures;
+import net.minecraft.world.gen.feature.*;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import java.util.Random;
 
 @Mixin(DefaultBiomeFeatures.class)
-public class TreeErasure {
+
+public class TreeManager {
+
+
     /**
      * @author = Ben Santos
      * @reason = removing trees from this biome
      */
     @Overwrite()
     public static void addSavannaTrees(GenerationSettings.Builder builder) {
+        //builder.feature(GenerationStep.Feature.VEGETAL_DECORATION, evo.PATCH_EVO_BLOCK_FEATURE);
+        builder.feature(GenerationStep.Feature.VEGETAL_DECORATION, evo.SINGLE_EVO_BLOCK_FEATURE);
         return;
     }
     /**
@@ -89,7 +92,7 @@ public class TreeErasure {
      */
     @Overwrite
     public static void addWindsweptForestTrees(GenerationSettings.Builder builder) {
-
+        return;
     }
 
     /**
@@ -129,6 +132,7 @@ public class TreeErasure {
      */
     @Overwrite
     public static void addPlainsFeatures(GenerationSettings.Builder builder) {
+        //builder.feature(GenerationStep.Feature.VEGETAL_DECORATION, VegetationPlacedFeatures.TREES_JUNGLE);
         builder.feature(GenerationStep.Feature.VEGETAL_DECORATION, VegetationPlacedFeatures.FLOWER_PLAIN);
         builder.feature(GenerationStep.Feature.VEGETAL_DECORATION, VegetationPlacedFeatures.PATCH_GRASS_PLAIN);
     }

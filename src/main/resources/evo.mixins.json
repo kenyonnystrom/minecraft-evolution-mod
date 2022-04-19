@@ -6,7 +6,7 @@
   "mixins": [
   ],
   "client": [
-    "TreeErasure"
+    "TreeManager"
   ],
   "injectors": {
     "defaultRequire": 1
