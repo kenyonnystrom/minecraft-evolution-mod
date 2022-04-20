@@ -83,13 +83,14 @@ public class EvolutionBlockEntity extends BlockEntity {
         idealTemp = idealTemp * multiplier;
         markDirty();
     }
-    // currently thinking health should range approximately 0 to 3. decreases when tree is older, and temp and moisture levels are more different from ideal
+    // Health has max of 3, decreases when tree is older, and temp and moisture levels are more different from ideal, when light is low, and when bark is stripped
+    //magic number city
     public float get_Health(){
-        //placeholder for improved version
+
         float temp_dist = (float) Math.pow(((idealTemp - get_Temp())*10), 2.0F);
         float moisture_dist = (float) Math.pow(((idealMoisture - get_Moisture())*10), 2.0F);
         float health = (30 - 3*age - temp_dist - moisture_dist)/10;
-        float light = (float) world.getLightLevel(pos);
+        float light = (float) world.getLightLevel(pos.up(height +1));
 
         System.out.printf("health:%f idealTemp:%f Temp:%f temp_dist:%f idealMoisture:%f Moisture:%f moist_dif:%f age:%d light:%f\n", health, idealTemp, get_Temp(), temp_dist, idealMoisture, get_Moisture(),moisture_dist, age, light);
         return health;
@@ -112,7 +113,8 @@ public class EvolutionBlockEntity extends BlockEntity {
             }
         }
         // attempting to control growth simply by cutting num of seeds in half
-        //unrounded = unrounded/2;
+        //magic number
+        unrounded = unrounded/2;
         //floor of unrounded value
         int rounded = (int) unrounded;
         //we are rounding probabilistically, if unrounded = 1.4 than 40% of the time rounded = 2, 6-% of the time rounded = 1
@@ -138,7 +140,7 @@ public class EvolutionBlockEntity extends BlockEntity {
                 unrounded = total_health * (1F - growthPercent);
             }
         }
-        //floor of unrounded value (NEED TO MAKE SURE THAT CASTING TO INT TAKES FLOOR)
+        //floor of unrounded value (CASTING TO INT TAKES FLOOR)
         int rounded = (int) unrounded;
         //we are rounding probabilistically, if unrounded = 1.4 than 40% of the time rounded = 2, 6-% of the time rounded = 1
         if (unrounded % 1 > random.nextFloat()){
@@ -171,6 +173,42 @@ public class EvolutionBlockEntity extends BlockEntity {
         }
     }
 
+    public BlockState get_Wood_Block(){
+        if (idealMoisture < 0.1F){
+            return Blocks.ACACIA_LOG.getDefaultState();
+        }
+        else if (idealMoisture < 0.3F){
+            return Blocks.OAK_LOG.getDefaultState();
+        }
+        else if (idealMoisture < 0.5F){
+            return Blocks.JUNGLE_LOG.getDefaultState();
+        }
+        else if (idealMoisture < 0.75F){
+            return Blocks.DARK_OAK_LOG.getDefaultState();
+        }
+        else {
+            return Blocks.SPRUCE_LOG.getDefaultState();
+        }
+    }
+
+    public Integer get_STAGE(){
+        if (idealMoisture < 0.1F){
+            return 1;
+        }
+        else if (idealMoisture < 0.3F){
+            return 2;
+        }
+        else if (idealMoisture < 0.5F){
+            return 3;
+        }
+        else if (idealMoisture < 0.75F){
+            return 4;
+        }
+        else {
+            return 5;
+        }
+    }
+
     public float get_Temp() {
         Biome biome = world.getBiome(pos);
         return biome.getTemperature();
@@ -184,6 +222,7 @@ public class EvolutionBlockEntity extends BlockEntity {
     public void mutate(){
         age = 0;
         height = 0;
+        //magic numbers
         //By adding a normally distributed value with sd = 1/3 there is roughly 86% chance it stays the same, 7% chance it increases, 7% chance it decreases
         ageStopGrowing = (int) Math.round(ageStopGrowing + r.nextGaussian()/3);
         //"clamping" value to be within allowed range 4-8
@@ -193,6 +232,7 @@ public class EvolutionBlockEntity extends BlockEntity {
         ageProduceSeeds = Math.max(1, Math.min(4,ageProduceSeeds));
 
         //changing float values with random distribution according to mutation rate
+        // magic numbers
         float idealTempMutationRate = 0.05F;
         float idealMoistureMutationRate = 0.03F;
         float growthPrecentMutationRate = 0.03F;
@@ -206,9 +246,7 @@ public class EvolutionBlockEntity extends BlockEntity {
     }
 
     //relies on block recieivng a random tick
-    public void die(ServerWorld world){
-            BlockState deadBush = Blocks.DEAD_BUSH.getDefaultState();
-            world.setBlockState(pos,deadBush);
+    public void die(){
             markRemoved();
     }
 

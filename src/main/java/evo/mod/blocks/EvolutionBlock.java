@@ -12,6 +12,7 @@ import net.minecraft.item.Items;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
+import net.minecraft.state.property.EnumProperty;
 import net.minecraft.state.property.IntProperty;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
@@ -23,13 +24,15 @@ import java.util.Random;
 
 public class EvolutionBlock extends Block implements BlockEntityProvider {
     //public static final IntProperty AGE = IntProperty.of("age",0, 2);
-    public static final BooleanProperty GROWN = BooleanProperty.of("grown");
+    //public static final BooleanProperty GROWN = BooleanProperty.of("grown");
+    public static final IntProperty STAGE = IntProperty.of("stage",0,11);
 
     public EvolutionBlock(Settings settings) {
         //The actual parameters given to super() are used to initialize the inherited instance variables
         super(settings);
         //EvolutionBlock is not grown by default
-        setDefaultState(getStateManager().getDefaultState().with(GROWN, false));
+        //setDefaultState(getStateManager().getDefaultState().with(GROWN, false));
+        setDefaultState(getStateManager().getDefaultState().with(STAGE, 0));
     }
 
     /*
@@ -40,7 +43,8 @@ public class EvolutionBlock extends Block implements BlockEntityProvider {
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
         //builder.add(AGE);
-        builder.add(GROWN);
+        //builder.add(GROWN);
+        builder.add(STAGE);
     }
 
     /*
@@ -50,8 +54,12 @@ public class EvolutionBlock extends Block implements BlockEntityProvider {
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         if (!world.isClient) {
-            grow_Tree(world,pos);
-            world.setBlockState(pos, state.with(GROWN, true));
+            //grow_Tree(world,pos);
+            int stage = state.get(STAGE);
+            if (stage >= 1 && stage <=5){
+                world.setBlockState(pos, state.with(STAGE, stage + 5));
+            }
+            //world.setBlockState(pos, state.with(STAGE, state.get(STAGE)+1));
             //System.out.println(world.getBlockState(pos));
             //world.setBlockState(pos, state.with(AGE, world.getBlockState(pos).get(AGE)+1));
         }
@@ -65,39 +73,66 @@ public class EvolutionBlock extends Block implements BlockEntityProvider {
     */
     @Override
     public void randomTick(BlockState state, ServerWorld world, BlockPos pos, Random random){
-        //cloneTree(world, pos, random,6);
-        int action;
+
         EvolutionBlockEntity blockEntity = (EvolutionBlockEntity) world.getBlockEntity(pos);
 
-        //increment age, age = number of random ticks this tree has received
-        blockEntity.increment_Age();
-        //get health based on environment and genetics
-        float health = blockEntity.get_Health();
-
-        //every random tick there is a chance that the tree dies, greater chance the lower the health
-        //old verion
-        //if (health < random.nextFloat()){
-        //new version intended to add more evolutionary pressure
-        if (health < random.nextGaussian()+1){
-            //tree dies so remove blocks, delete blockEntity, put dead bush blockstate
-            for (int i=1; i<blockEntity.get_height(); i+=1){
-                dropStack(world, pos.add(0,i,0), new ItemStack(Items.OAK_LOG, 1));
-                dropStack(world, pos.add(0,i,0), new ItemStack(Items.STICK, 1));
+        //if already dead, delete from world with probability 0.3
+        if (state.get(STAGE)==11){
+            if (random.nextFloat()<0.3F){
+                //delete block entity
+                blockEntity.die();
+                //delete block
+                world.removeBlock(pos, false);
             }
-            blockEntity.die(world);
-            TreeGrower.kill_Tree(world, pos);
         }
-        //if tree survives
+        //normal case if tree still alive
         else {
-            //grow a number of blocks determined by health and age
-           for(int i = 0; i < blockEntity.get_grow_amt(health,random); i++){
-               world.setBlockState(pos, state.with(GROWN, true));
-               grow_Tree(world,pos);
-           }
-           //attempt to produce offspring a number of times determined by health and age
-           for(int i = 0; i < blockEntity.get_num_seeds(health, random);i++){
-               cloneTree(world, pos, random, blockEntity.get_height(), blockEntity);
-           }
+            //increment age, age = number of random ticks this tree has received
+            blockEntity.increment_Age();
+
+            //get health based on environment and genetics
+            float health = blockEntity.get_Health();
+
+            //every random tick there is a chance that the tree dies, greater chance the lower the health
+            //old verion
+            //if (health < random.nextFloat()){
+            //new version intended to add more evolutionary pressure
+            if (health < random.nextGaussian()+1){
+                //tree dies so remove blocks, delete blockEntity, put dead bush blockstate
+                for (int i=1; i<blockEntity.get_height(); i+=1){
+                    dropStack(world, pos.add(0,i,0), new ItemStack(Items.OAK_LOG, 1));
+                    dropStack(world, pos.add(0,i,0), new ItemStack(Items.STICK, 1));
+                }
+                //remove all other blocks of tree
+                TreeGrower.kill_Tree(world, pos);
+                //set blockstate to 11, or dead, will be dead sapling and then disappear
+                world.setBlockState(pos, state.with(STAGE, 11));
+            }
+            //if tree survives
+            else {
+                //grow a number of blocks determined by health and age
+                for(int i = 0; i < blockEntity.get_grow_amt(health,random); i++){
+                    //if tree is stripped
+                    if (state.get(STAGE) > 5){
+                        //subtract 5 to return tree to appropriate un-stripped state
+                        //Note: this takes one grow stage so tree cannot grow until it grows back
+                        world.setBlockState(pos, state.with(STAGE, state.get(STAGE)-5));
+                    }
+                    //if tree is not stripped
+                    else{
+                        //if tree is in sapling stage
+                        if (state.get(STAGE) == 0){
+                            //change it to be in the appropriate stage (1-5) depending on idealMoisture, this will affect its wood type
+                            world.setBlockState(pos, state.with(STAGE, blockEntity.get_STAGE()));
+                        }
+                        grow_Tree(world,pos);
+                    }
+                }
+                //attempt to produce offspring a number of times determined by health and age
+                for(int i = 0; i < blockEntity.get_num_seeds(health, random);i++){
+                    cloneTree(world, pos, random, blockEntity.get_height(), blockEntity);
+                }
+            }
         }
     }
 
@@ -139,20 +174,17 @@ public class EvolutionBlock extends Block implements BlockEntityProvider {
     Needs
     */
     public void grow_Tree(World world, BlockPos pos){
-        if (world.getBlockState(pos).get(GROWN)){
-            //Get associated BlockEntity
-            EvolutionBlockEntity blockEntity = (EvolutionBlockEntity) world.getBlockEntity(pos);
-            //Increase its height by 1
-            blockEntity.increment_Height();
-            //Add height to position of block to get top of trunk
-            //curr_height = height of tree trunk
-            int curr_height = blockEntity.get_height();
-            //System.out.println(curr_height);
+        //Get associated BlockEntity
+        EvolutionBlockEntity blockEntity = (EvolutionBlockEntity) world.getBlockEntity(pos);
+        //Increase its height by 1
+        blockEntity.increment_Height();
+        //Add height to position of block to get top of trunk
+        //curr_height = height of tree trunk
+        int curr_height = blockEntity.get_height();
+        //System.out.println(curr_height);
 
-            TreeGrower.grow_Trunk(world, pos, curr_height);
-            TreeGrower.grow_Leaves(world, pos, curr_height, blockEntity.get_Leaf_Block());
-
-        }
+        TreeGrower.grow_Trunk(world, pos, curr_height, blockEntity.get_Wood_Block());
+        TreeGrower.grow_Leaves(world, pos, curr_height, blockEntity.get_Leaf_Block());
     }
 
     /*

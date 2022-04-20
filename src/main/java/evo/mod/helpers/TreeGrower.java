@@ -7,9 +7,8 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 
 public class TreeGrower {
-    public static void grow_Trunk(World world, BlockPos pos, int height){
+    public static void grow_Trunk(World world, BlockPos pos, int height, BlockState wood_block){
         //can add max height here if needed
-        BlockState wood_block = Blocks.OAK_LOG.getDefaultState();
         BlockPos wood_pos = pos.add(0, height, 0);
         world.setBlockState(wood_pos, wood_block);
     }

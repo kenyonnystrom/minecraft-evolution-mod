@@ -1,6 +1,16 @@
 {
     "variants": {
-        "grown=false": { "model": "evo:block/evolution_block_age0"},
-        "grown=true": { "model": "evo:block/evolution_block_wood"}
+        "stage=0": {"model": "minecraft:block/oak_sapling"},
+        "stage=1": {"model": "minecraft:block/acacia_log"},
+        "stage=2": {"model": "minecraft:block/oak_log"},
+        "stage=3": {"model": "minecraft:block/jungle_log"},
+        "stage=4": {"model": "minecraft:block/dark_oak_log"},
+        "stage=5": {"model": "minecraft:block/spruce_log"},
+        "stage=6": {"model": "minecraft:block/stripped_acacia_log"},
+        "stage=7": {"model": "minecraft:block/stripped_oak_log"},
+        "stage=8": {"model": "minecraft:block/stripped_jungle_log"},
+        "stage=9": {"model": "minecraft:block/stripped_dark_oak_log"},
+        "stage=10": {"model": "minecraft:block/stripped_spruce_log"},
+        "stage=11": {"model": "minecraft:block/dead_bush"}
     }
 }
