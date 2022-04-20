@@ -32,7 +32,7 @@ public class evo implements ModInitializer {
     //blocks
     public static final EvolutionBlock EVOLUTION_BLOCK = new EvolutionBlock(FabricBlockSettings.of(Material.PLANT).hardness(2.0f).sounds(BlockSoundGroup.WOOD).ticksRandomly().nonOpaque());
 
-    //block entity declartion
+    //block entity declaration
     public static BlockEntityType<EvolutionBlockEntity> EVOLUTION_ENTITY;
 
     /*

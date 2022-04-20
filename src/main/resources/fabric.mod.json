@@ -27,6 +27,7 @@
   },
   "mixins": [
     "evo.sheep.mixins.json",
+    "evo.tree.mixins.json",
     "evo.rendering.mixins.json",
     "evo.wolf.mixins.json"
   ],
