@@ -25,12 +25,30 @@ import java.util.Random;
 public class EvolutionBlock extends Block implements BlockEntityProvider {
     //public static final IntProperty AGE = IntProperty.of("age",0, 2);
     //public static final BooleanProperty GROWN = BooleanProperty.of("grown");
+
+    //set up integer property that can have 12 different values 0-11, each of these is essentially a different blockstate
+    //these are primarily for models/textures but are also used in places to keep track of the stage
+    //for example if STAGE = 11, tree is already dead and will despawn in the next few random ticks
+    /*
+        "stage=0": oak_sapling
+        "stage=1": acacia_log
+        "stage=2": oak_log
+        "stage=3": jungle_log
+        "stage=4": dark_oak_log
+        "stage=5": spruce_log
+        "stage=6": stripped_acacia_log
+        "stage=7": stripped_oak_log
+        "stage=8": stripped_jungle_log
+        "stage=9": stripped_dark_oak_log
+        "stage=10": stripped_spruce_log
+        "stage=11": dead_bush
+    */
     public static final IntProperty STAGE = IntProperty.of("stage",0,11);
 
     public EvolutionBlock(Settings settings) {
         //The actual parameters given to super() are used to initialize the inherited instance variables
         super(settings);
-        //EvolutionBlock is not grown by default
+        //EvolutionBlock is a sapling by default
         //setDefaultState(getStateManager().getDefaultState().with(GROWN, false));
         setDefaultState(getStateManager().getDefaultState().with(STAGE, 0));
     }
@@ -113,10 +131,10 @@ public class EvolutionBlock extends Block implements BlockEntityProvider {
                 //grow a number of blocks determined by health and age
                 for(int i = 0; i < blockEntity.get_grow_amt(health,random); i++){
                     //if tree is stripped
-                    if (state.get(STAGE) > 5){
+                    if (world.getBlockState(pos).get(STAGE) > 5){
                         //subtract 5 to return tree to appropriate un-stripped state
                         //Note: this takes one grow stage so tree cannot grow until it grows back
-                        world.setBlockState(pos, state.with(STAGE, state.get(STAGE)-5));
+                        world.setBlockState(pos, state.with(STAGE, world.getBlockState(pos).get(STAGE)-5));
                     }
                     //if tree is not stripped
                     else{

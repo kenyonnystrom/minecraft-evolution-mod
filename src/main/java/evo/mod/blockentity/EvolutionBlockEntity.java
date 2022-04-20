@@ -53,13 +53,6 @@ public class EvolutionBlockEntity extends BlockEntity {
         ageStopGrowing = tag.getInt("ageStopGrowing");
         height = tag.getInt("height");
     }
-    public void copyValues(EvolutionBlockEntity parent){
-        idealTemp = parent.get_idealTemp();
-        idealMoisture = parent.get_idealMoisture();
-        growthPercent = parent.get_growthPercent();
-        ageProduceSeeds = parent.get_ageProduceSeeds();
-        ageStopGrowing = parent.get_ageStopGrowing();
-    }
 
     public float get_idealTemp() {return idealTemp;}
     public float get_idealMoisture() {return idealMoisture;}
@@ -79,10 +72,18 @@ public class EvolutionBlockEntity extends BlockEntity {
         markDirty();
     }
 
-    public void update_IdealTemp(float multiplier){
-        idealTemp = idealTemp * multiplier;
-        markDirty();
+    //looks up default temp value for biome, which ranges -0.7 to 2, could be more sophisticated to take in light, altitude
+    public float get_Temp() {
+        Biome biome = world.getBiome(pos);
+        return biome.getTemperature();
     }
+
+    //just looks up default downfall value for biome, could be more sophisticated by taking in temp, altitude, proximity to water for example
+    public float get_Moisture(){
+        Biome biome = world.getBiome(pos);
+        return biome.getDownfall();
+    }
+
     // Health has max of 3, decreases when tree is older, and temp and moisture levels are more different from ideal, when light is low, and when bark is stripped
     //magic number city
     public float get_Health(){
@@ -96,6 +97,7 @@ public class EvolutionBlockEntity extends BlockEntity {
         return health;
     }
 
+    //given health and genetics, returns how many offspring should be produced this lifecycle (could be 0)
     public int get_num_seeds(float total_health, Random random){
         float unrounded;
         // if too young to produce seeds, return zero so no clones will be made
@@ -124,6 +126,7 @@ public class EvolutionBlockEntity extends BlockEntity {
         return rounded;
     }
 
+    //given health and genetics, returns how blocks tree should grow this lifecycle (could be 0)
     public int get_grow_amt(float total_health, Random random){
         float unrounded;
         // if too old to grow, return zero so no growth occurs
@@ -149,6 +152,7 @@ public class EvolutionBlockEntity extends BlockEntity {
         return rounded;
     }
 
+    //based on idealTemp, return appropriate leaf block for TreeGrower to use, darker leaves = more adapted to cold
     public BlockState get_Leaf_Block(){
         if (idealTemp < 0.0F){
             return Blocks.SPRUCE_LEAVES.getDefaultState().with(Properties.PERSISTENT, true);
@@ -173,6 +177,7 @@ public class EvolutionBlockEntity extends BlockEntity {
         }
     }
 
+    //based on idealMoisture, return appropriate wood block for TreeGrower to use, darker bark = more adapted to wet
     public BlockState get_Wood_Block(){
         if (idealMoisture < 0.1F){
             return Blocks.ACACIA_LOG.getDefaultState();
@@ -191,6 +196,8 @@ public class EvolutionBlockEntity extends BlockEntity {
         }
     }
 
+    //same as above but for changing blockstate of base block rather than b locks of trunk
+    //unlike get_Leaf_Block() and get_Wood_Block(), should only be called once when tree first grows from sapling
     public Integer get_STAGE(){
         if (idealMoisture < 0.1F){
             return 1;
@@ -209,16 +216,16 @@ public class EvolutionBlockEntity extends BlockEntity {
         }
     }
 
-    public float get_Temp() {
-        Biome biome = world.getBiome(pos);
-        return biome.getTemperature();
+    //used to copy genetic info from parent to new offspring, to then be mutated
+    public void copyValues(EvolutionBlockEntity parent){
+        idealTemp = parent.get_idealTemp();
+        idealMoisture = parent.get_idealMoisture();
+        growthPercent = parent.get_growthPercent();
+        ageProduceSeeds = parent.get_ageProduceSeeds();
+        ageStopGrowing = parent.get_ageStopGrowing();
     }
 
-    public float get_Moisture(){
-        Biome biome = world.getBiome(pos);
-        return biome.getDownfall();
-    }
-
+    //takes offspring that is identical copy of parent, resets age and height, and randomly mutates genetics
     public void mutate(){
         age = 0;
         height = 0;
@@ -245,11 +252,12 @@ public class EvolutionBlockEntity extends BlockEntity {
         markDirty();
     }
 
-    //relies on block recieivng a random tick
+    //called when dead bush decays, removes block entity
+    //possibly we could get rid of it earlier and save a bit of memory, but I was paranoid about having a block without an associated entity
     public void die(){
             markRemoved();
     }
-
+// remnant of ben experimenting with the block entity getting game ticks so lifecycle would be on more consistent schedule
 //    public static void tick(World world, BlockPos pos, BlockState state, EvolutionBlockEntity be) {
 //        System.out.println(pos);
 //
