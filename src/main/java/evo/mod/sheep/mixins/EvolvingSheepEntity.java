@@ -20,6 +20,7 @@ import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.passive.PassiveEntity;
 import net.minecraft.entity.passive.SheepEntity;
 
+import net.minecraft.entity.passive.WolfEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -37,6 +38,7 @@ import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 
+import org.apache.logging.log4j.core.jmx.Server;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.*;
@@ -311,7 +313,7 @@ implements EvolvingSheepAccess {
 
     // Called when sheep age (on tick), determines if wolves should spawn or not
     // Could be changed to work off of chunk tick instead
-    private void checkWolfThreshold() {
+    private void checkWolfThreshold(ServerWorld world) {
         System.out.println("in wolf check");
         // create box around sheep to check
         BlockPos pos = super.getBlockPos();
@@ -332,9 +334,14 @@ implements EvolvingSheepAccess {
         int lowerThreshold = 4;
         if (numSheep >= upperThreshold){
             //spawn 2 wolves
-
+            WolfEntity wolfEntity = (WolfEntity)EntityType.WOLF.create(world);
+            wolfEntity.refreshPositionAndAngles(this.getX(), this.getY(), this.getZ(), 0.0F, 0.0F);
+            world.spawnEntityAndPassengers(wolfEntity);
+            world.sendEntityStatus(this, (byte)18);
+            if (world.getGameRules().getBoolean(GameRules.DO_MOB_LOOT)) {
+                world.spawnEntity(new ExperienceOrbEntity(world, this.getX(), this.getY(), this.getZ(), this.getRandom().nextInt(7) + 1));
+            }
             //System.out.println("spawn WOLVES!!!");
-
         }
         else if (numSheep <= lowerThreshold){
             //despawn any wolves
@@ -352,7 +359,7 @@ implements EvolvingSheepAccess {
 
             this.feelTemperature();
             this.increaseAge();
-            this.checkWolfThreshold();
+            this.checkWolfThreshold((ServerWorld) world);
             //System.out.println("post wolf check?");
             System.out.println(this.getWool().getName());
         }
