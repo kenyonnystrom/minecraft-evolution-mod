@@ -20,7 +20,8 @@ public class TreeManager {
     @Overwrite()
     public static void addSavannaTrees(GenerationSettings.Builder builder) {
         //builder.feature(GenerationStep.Feature.VEGETAL_DECORATION, evo.PATCH_EVO_BLOCK_FEATURE);
-        builder.feature(GenerationStep.Feature.VEGETAL_DECORATION, evo.SINGLE_EVO_BLOCK_FEATURE);
+        //builder.feature(GenerationStep.Feature.VEGETAL_DECORATION, evo.SINGLE_EVO_BLOCK_FEATURE);
+        builder.feature(GenerationStep.Feature.VEGETAL_DECORATION, evo.EVOLUTION_TREE_PLACED);
         return;
     }
     /**

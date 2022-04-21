@@ -1,6 +1,7 @@
 package evo.mod;
 
 import evo.mod.blockentity.EvolutionBlockEntity;
+import evo.mod.world.features.EvolutionTreeFeature;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
@@ -46,6 +47,11 @@ public class evo implements ModInitializer {
     //evolution blocks as saplings scattered intermittently better
     public static final ConfiguredFeature<SimpleBlockFeatureConfig, ?> SINGLE_EVO_BLOCK_FEATURE_CONFIG = ConfiguredFeatures.register("single_evo_block_feature_config", Feature.SIMPLE_BLOCK.configure(new SimpleBlockFeatureConfig(BlockStateProvider.of(evo.EVOLUTION_BLOCK.getDefaultState()))));
     public static final PlacedFeature SINGLE_EVO_BLOCK_FEATURE = PlacedFeatures.register("single_evo_block_feature", SINGLE_EVO_BLOCK_FEATURE_CONFIG.withPlacement(new PlacementModifier[]{RarityFilterPlacementModifier.of(1), SquarePlacementModifier.of(), PlacedFeatures.MOTION_BLOCKING_HEIGHTMAP, BiomePlacementModifier.of()}));
+
+    //evolution block with tree above - currently testing
+    public static final Feature<DefaultFeatureConfig> EVOLUTION_TREE_FEATURE = Registry.register(Registry.FEATURE,"evolution_tree", new EvolutionTreeFeature(DefaultFeatureConfig.CODEC));
+    public static final ConfiguredFeature<DefaultFeatureConfig, ?> EVOLUTION_TREE_FEATURE_CONFIGURED = ConfiguredFeatures.register("evolution_tree_config", EVOLUTION_TREE_FEATURE.configure(FeatureConfig.DEFAULT));
+    public static final PlacedFeature EVOLUTION_TREE_PLACED = PlacedFeatures.register("evolution_tree_placed", EVOLUTION_TREE_FEATURE_CONFIGURED.withPlacement(new PlacementModifier[]{RarityFilterPlacementModifier.of(1), SquarePlacementModifier.of(), PlacedFeatures.MOTION_BLOCKING_HEIGHTMAP, BiomePlacementModifier.of()}));
 
     //initialize
     @Override
