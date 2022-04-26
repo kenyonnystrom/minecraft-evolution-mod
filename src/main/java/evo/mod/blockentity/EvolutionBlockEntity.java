@@ -258,9 +258,9 @@ public class EvolutionBlockEntity extends BlockEntity {
             markRemoved();
     }
 // remnant of ben experimenting with the block entity getting game ticks so lifecycle would be on more consistent schedule
-//    public static void tick(World world, BlockPos pos, BlockState state, EvolutionBlockEntity be) {
-//        System.out.println(pos);
-//
-//    }
+    public static void tick(World world, BlockPos pos, BlockState state, EvolutionBlockEntity be) {
+        System.out.println(pos);
+
+    }
 
 }

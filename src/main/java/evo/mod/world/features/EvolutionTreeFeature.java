@@ -39,12 +39,11 @@ public class EvolutionTreeFeature extends Feature<DefaultFeatureConfig> {
     public boolean generate(FeatureContext<DefaultFeatureConfig> context) {
         BlockPos blockPos = context.getOrigin();
         StructureWorldAccess world = context.getWorld();
-//        for(int i = 1; i <= 3; ++i) {
-//            world.setBlockState(blockPos.add(0, i, 0), this.wall, 2);
-//        }
         world.setBlockState(blockPos, evo.EVOLUTION_BLOCK.getDefaultState().with(STAGE, 2),2);
+
+        //grow tree
         for(int i = 1; i <= 3; ++i) {
-            TreeGrower.generate_Trunk(world,blockPos,i,Blocks.OAK_LOG.getDefaultState());
+            TreeGrower.generate_Trunk(world,blockPos,i, Blocks.OAK_LOG.getDefaultState());
             TreeGrower.generate_Small_Leaves(world, blockPos,i, Blocks.OAK_LEAVES.getDefaultState().with(PERSISTENT, true));
 
             EvolutionBlockEntity blockEntity = (EvolutionBlockEntity) world.getBlockEntity(blockPos);
