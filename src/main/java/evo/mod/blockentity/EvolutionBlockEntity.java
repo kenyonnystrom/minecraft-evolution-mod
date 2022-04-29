@@ -1,7 +1,10 @@
 package evo.mod.blockentity;
+import evo.mod.helpers.TreeGrower;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.property.Properties;
@@ -9,14 +12,17 @@ import net.minecraft.util.math.BlockPos;
 import evo.mod.evo;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
+import static evo.mod.blocks.EvolutionBlock.STAGE;
+import static net.minecraft.block.Block.dropStack;
+import static net.minecraft.block.LeavesBlock.PERSISTENT;
 
 import java.util.Random;
 
 public class EvolutionBlockEntity extends BlockEntity {
 
     //data to store
-    int count = 0;
-    Random r = new Random();
+    public int tickCounter = 0;
+    static Random r = new Random();
     private float idealTemp = -0.7F + (r.nextFloat() * 2.7F); //health gets worse the farther actual temp it is from this value
     private float idealMoisture = r.nextFloat(); // same as above but for water (we will have to generate value for water)
     private float growthPercent = r.nextFloat(); //at times when tree is doing both growing and reproducing, what percent of health is spent on growth
@@ -24,6 +30,8 @@ public class EvolutionBlockEntity extends BlockEntity {
     private int ageProduceSeeds =(int) (4 * r.nextFloat()); //the tree will only attempt to produce new trees when age >= this value, otherwise, all resources will be spent on growth
     private int ageStopGrowing = 4 + (int) (4 * r.nextFloat()); //the tree will only attempt to grow when age >= this value, otherwise, all resources will be spent on growth
     private int height = 0;
+
+
     //constructor
     public EvolutionBlockEntity(BlockPos pos, BlockState state) {
         super(evo.EVOLUTION_ENTITY, pos, state);
@@ -55,12 +63,20 @@ public class EvolutionBlockEntity extends BlockEntity {
     }
 
     public float get_idealTemp() {return idealTemp;}
+
     public float get_idealMoisture() {return idealMoisture;}
+
     public float get_growthPercent() {return growthPercent;}
+
     public int get_Age() {return age;}
+
     public int get_ageProduceSeeds() {return ageProduceSeeds;}
+
     public int get_ageStopGrowing() {return ageStopGrowing;}
+
     public int get_height() {return height;}
+
+    public int get_tickCounter() {return tickCounter;}
 
     public void increment_Height(){
         height = height + 1;
@@ -69,6 +85,11 @@ public class EvolutionBlockEntity extends BlockEntity {
 
     public void increment_Age(){
         age = age + 1;
+        markDirty();
+    }
+
+    public void increment_tickCounter(){
+        tickCounter = tickCounter + 1;
         markDirty();
     }
 
@@ -155,25 +176,25 @@ public class EvolutionBlockEntity extends BlockEntity {
     //based on idealTemp, return appropriate leaf block for TreeGrower to use, darker leaves = more adapted to cold
     public BlockState get_Leaf_Block(){
         if (idealTemp < 0.0F){
-            return Blocks.SPRUCE_LEAVES.getDefaultState().with(Properties.PERSISTENT, true);
+            return Blocks.SPRUCE_LEAVES.getDefaultState().with(PERSISTENT, true);
         }
         else if (idealTemp < 0.5F){
-            return Blocks.BIRCH_LEAVES.getDefaultState().with(Properties.PERSISTENT, true);
+            return Blocks.BIRCH_LEAVES.getDefaultState().with(PERSISTENT, true);
         }
         else if (idealTemp < 0.75F){
-            return Blocks.ACACIA_LEAVES.getDefaultState().with(Properties.PERSISTENT, true);
+            return Blocks.ACACIA_LEAVES.getDefaultState().with(PERSISTENT, true);
         }
         else if (idealTemp < 0.1F){
-            return Blocks.DARK_OAK_LEAVES.getDefaultState().with(Properties.PERSISTENT, true);
+            return Blocks.DARK_OAK_LEAVES.getDefaultState().with(PERSISTENT, true);
         }
         else if (idealTemp < 1.3F){
-            return Blocks.OAK_LEAVES.getDefaultState().with(Properties.PERSISTENT, true);
+            return Blocks.OAK_LEAVES.getDefaultState().with(PERSISTENT, true);
         }
         else if (idealTemp < 1.6F){
-            return Blocks.JUNGLE_LEAVES.getDefaultState().with(Properties.PERSISTENT, true);
+            return Blocks.JUNGLE_LEAVES.getDefaultState().with(PERSISTENT, true);
         }
         else{
-            return Blocks.AZALEA_LEAVES.getDefaultState().with(Properties.PERSISTENT, true);
+            return Blocks.AZALEA_LEAVES.getDefaultState().with(PERSISTENT, true);
         }
     }
 
@@ -257,10 +278,110 @@ public class EvolutionBlockEntity extends BlockEntity {
     public void die(){
             markRemoved();
     }
-// remnant of ben experimenting with the block entity getting game ticks so lifecycle would be on more consistent schedule
-//    public static void tick(World world, BlockPos pos, BlockState state, EvolutionBlockEntity be) {
-//        System.out.println(pos);
-//
-//    }
 
+    // remnant of ben experimenting with the block entity getting game ticks so lifecycle would be on more consistent schedule
+    public static void tick(World world, BlockPos pos, BlockState state, EvolutionBlockEntity be) {
+        //increment tickCounter
+        be.tickCounter = be.tickCounter + 1;
+
+        //number of ticks needed for evolution to occur = could be a minimum amount or a multiple of a number
+        if (be.tickCounter % 100 == 0){
+            //if tree is already dead, delete from world with probability 0.3
+            if (state.get(STAGE)==11){
+                if (r.nextFloat()<0.3F){
+                    //delete block entity
+                    be.die();
+                    //delete block
+                    world.removeBlock(pos, false);
+                }
+            }
+
+            //tree is still alive
+            else {
+                //increment age, age = number of random ticks this tree has received
+                be.increment_Age();
+
+                //get health based on environment and genetics
+                float health = be.get_Health();
+
+                //every random tick there is a chance that the tree dies, greater chance the lower the health
+                //new version intended to add more evolutionary pressure
+                if (health < r.nextGaussian() + 1) {
+                    //tree dies so remove blocks, delete blockEntity, put dead bush blockstate
+                    for (int i = 1; i < be.get_height(); i += 1) {
+                        dropStack(world, pos.add(0, i, 0), new ItemStack(Items.OAK_LOG, 1));
+                        dropStack(world, pos.add(0, i, 0), new ItemStack(Items.STICK, 1));
+                    }
+                    //remove all other blocks of tree
+                    TreeGrower.kill_Tree(world, pos);
+                    //set blockstate to 11, or dead, will be dead sapling and then disappear
+                    world.setBlockState(pos, state.with(STAGE, 11));
+                }
+                //if tree survives
+                else {
+                    //grow a number of blocks determined by health and age
+                    for(int i = 0; i < be.get_grow_amt(health,r); i++){
+                        //if tree is stripped
+                        if (world.getBlockState(pos).get(STAGE) > 5){
+                            //subtract 5 to return tree to appropriate un-stripped state
+                            //Note: this takes one grow stage so tree cannot grow until it grows back
+                            world.setBlockState(pos, state.with(STAGE, world.getBlockState(pos).get(STAGE)-5));
+                        }
+                        //if tree is not stripped
+                        else{
+                            //if tree is in sapling stage
+                            if (state.get(STAGE) == 0){
+                                //change it to be in the appropriate stage (1-5) depending on idealMoisture, this will affect its wood type
+                                world.setBlockState(pos, state.with(STAGE, be.get_STAGE()));
+                            }
+                            grow_Tree(world,pos, be);
+                        }
+                    }
+                    //attempt to produce offspring a number of times determined by health and age
+                    for(int i = 0; i < be.get_num_seeds(health, r);i++){
+                        cloneTree(world, pos, r, be.get_height(), be);
+                    }
+                }
+            }
+        }
+    }
+
+    private static void cloneTree(World world, BlockPos pos, Random r, int height, EvolutionBlockEntity be) {
+        int x_offset = (int) Math.round(r.nextGaussian()*height*4);
+        int z_offset = (int) Math.round(r.nextGaussian()*height*4);
+        BlockPos checkPos = new BlockPos(pos.getX() + x_offset, pos.getY() +height,pos.getZ() + z_offset);
+        int status = 0;
+        while (status < 2){
+            BlockState blockState = world.getBlockState(checkPos);
+            if (blockState.isAir()){
+                status = 1;
+                checkPos = checkPos.down();
+            }
+            else if ((status == 1) && (blockState.isOf(Blocks.FARMLAND) || blockState.isOf(Blocks.DIRT) || blockState.isOf(Blocks.COARSE_DIRT) || blockState.isOf(Blocks.PODZOL) || blockState.isOf(Blocks.GRASS_BLOCK) || blockState.isOf(Blocks.SAND) || blockState.isOf(Blocks.SNOW_BLOCK))){
+                status = 2;
+            }
+            else{
+                status = 3;
+            }
+        }
+        if (status == 2){
+            BlockPos newTreePos = checkPos.up();
+            BlockState newTree = evo.EVOLUTION_BLOCK.getDefaultState();
+            world.setBlockState(newTreePos, newTree);
+            EvolutionBlockEntity blockEntity = (EvolutionBlockEntity) world.getBlockEntity(newTreePos);
+            blockEntity.copyValues(be);
+            blockEntity.mutate();
+        }
+    }
+
+    public static void grow_Tree(World world, BlockPos pos, EvolutionBlockEntity be) {
+        //Increase BlockEntity height by 1
+        be.increment_Height();
+        //Add height to position of block to get top of trunk
+        //curr_height = height of tree trunk
+        int curr_height = be.get_height();
+
+        TreeGrower.grow_Trunk(world, pos, curr_height, be.get_Wood_Block());
+        TreeGrower.grow_Leaves(world, pos, curr_height, be.get_Leaf_Block());
+    }
 }
