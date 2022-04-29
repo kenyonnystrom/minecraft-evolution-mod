@@ -11,18 +11,20 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
-import net.minecraft.state.property.BooleanProperty;
-import net.minecraft.state.property.EnumProperty;
 import net.minecraft.state.property.IntProperty;
+import net.minecraft.text.LiteralText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import evo.mod.helpers.TreeGrower;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Random;
 
-public class EvolutionBlock extends Block implements BlockEntityProvider {
+
+public class EvolutionBlock extends BlockWithEntity implements BlockEntityProvider {
     //public static final IntProperty AGE = IntProperty.of("age",0, 2);
     //public static final BooleanProperty GROWN = BooleanProperty.of("grown");
 
@@ -80,6 +82,10 @@ public class EvolutionBlock extends Block implements BlockEntityProvider {
             //world.setBlockState(pos, state.with(STAGE, state.get(STAGE)+1));
             //System.out.println(world.getBlockState(pos));
             //world.setBlockState(pos, state.with(AGE, world.getBlockState(pos).get(AGE)+1));
+            EvolutionBlockEntity blockEntity = (EvolutionBlockEntity) world.getBlockEntity(pos);
+            String s =String.valueOf(blockEntity.get_Age());
+            player.sendMessage(new LiteralText(s), false);
+
         }
         return ActionResult.SUCCESS;
     }
@@ -213,12 +219,18 @@ public class EvolutionBlock extends Block implements BlockEntityProvider {
         return new EvolutionBlockEntity(pos, state);
     }
 
-//    @Override
-//    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-//        return checkType(type, evo.EVOLUTION_ENTITY, (world1, pos, state1, be) -> EvolutionBlockEntity.tick(world1, pos, state1, be));
-//    }
 
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
+        return checkType(type, evo.EVOLUTION_ENTITY, (world1, pos, state1, be) -> EvolutionBlockEntity.tick(world1, pos, state1, be));
+    }
 
-
+    //make BlockVisible
+    //necessary if you allow it to tick
+    @Override
+    public BlockRenderType getRenderType(BlockState state) {
+        // With inheriting from BlockWithEntity this defaults to INVISIBLE, so we need to change that!
+        return BlockRenderType.MODEL;
+    }
 }
 
