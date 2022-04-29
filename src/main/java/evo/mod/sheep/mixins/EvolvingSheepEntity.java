@@ -5,13 +5,17 @@
 
 package evo.mod.sheep.mixins;
 
+import evo.mod.blocks.EvolutionBlock;
 import evo.mod.features.ChatExt;
 import evo.mod.features.DamageSourceExt;
 
+import evo.mod.sheep.EatTreeGoal;
 import evo.mod.sheep.EvolvingSheepAccess;
 import evo.mod.features.WoolType;
 import net.minecraft.advancement.criterion.Criteria;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.*;
+import net.minecraft.entity.ai.goal.EatGrassGoal;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
@@ -32,29 +36,35 @@ import net.minecraft.text.TranslatableText;
 import net.minecraft.util.math.BlockPos;
 
 import net.minecraft.util.math.Box;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 
-import org.apache.logging.log4j.core.jmx.Server;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.*;
 
 import java.util.List;
 import java.util.Random;
-import java.util.function.Predicate;
 
 @Mixin(SheepEntity.class)
 public abstract class EvolvingSheepEntity
 extends AnimalEntity
 implements EvolvingSheepAccess {
+    private static final TrackedData<Byte> WOOL;
     private int realTick = 100;
     private int lifeTicks = 0;
-    private int grassCount;
-    private static final TrackedData<Byte> WOOL;
+    private final int breedThreshold = 2;
+    private int foodCount;
+    private int timeSinceEating = 5;
+    private BlockPos treeTarget;
+    public boolean hasTree;
+
 
     // Constructor
     public EvolvingSheepEntity(EntityType<? extends AnimalEntity> entityType, World world) { super(entityType, world); }
@@ -64,6 +74,12 @@ implements EvolvingSheepAccess {
     // Register data tracking
     static {
         WOOL = DataTracker.registerData(EvolvingSheepEntity.class, TrackedDataHandlerRegistry.BYTE);
+    }
+
+    // Insert Tree-eating goal in priority list
+    @Inject(method="initGoals", at = @At("TAIL"))
+    protected void initGoals(CallbackInfo ci) {
+        this.goalSelector.add(3, new EatTreeGoal(this, 1.0));
     }
 
     // Adding to sheepEntity data tracker initialization (which only tracks color), begin tracking Wool
@@ -273,20 +289,81 @@ implements EvolvingSheepAccess {
     }
 
     //endregion
-    //region LIFE-RELATED METHODS
+    //region TREE-RELATED METHODS
 
-    @Inject(method="onEatingGrass", at = @At("HEAD"))
-    public void onEatingGrass(CallbackInfo info) {
-        this.grassCount++;
-        if (grassCount >= 2) {
-            if (!this.isBaby()) {
-                if (!this.world.isClient) {
-                    setLoveTicks(60000);
-                }
+    // When sheep eats anything, check food count for breeding threshold or reset
+    private void onEating() {
+        this.foodCount++;
+        System.out.println(this.foodCount);
+        // If sheep has eaten enough food, go into love mode
+        if (this.foodCount == this.breedThreshold) {
+            if (!this.world.isClient) {
+                setLoveTicks(60000);
             }
+        // If sheep has taken enough time after breeding, start eating trees again
+        } else if (this.foodCount > 3) {
+            this.foodCount = 0;
+        }
+        this.timeSinceEating = 0;
+    }
+
+    // When sheep finishes tree goal, check to make sure it actually ate then divert to eating method
+    public void onEatingTree(boolean success) {
+        this.hasTree = false;
+        if (success) {
+            this.onEating();
         }
     }
 
+    // When sheep eat grass, divert to eating method before standard grass procedure
+    @Inject(method="onEatingGrass", at = @At("HEAD"))
+    public void onEatingGrass(CallbackInfo info) {
+        if (!this.isBaby()) {
+            this.onEating();
+        }
+    }
+
+    // Called in mobTick; searches for an EvolvingTree in a given search vicinity, sets global and returns true if found
+    private boolean findEvolvingTree(double searchDistance) {
+        BlockPos blockPos = super.getBlockPos();
+        BlockPos.Mutable mutable = new BlockPos.Mutable();
+
+        for (int i = 0; (double) i <= searchDistance; i = i > 0 ? -i : 1 - i) {
+            for (int j = 0; (double) j < searchDistance; ++j) {
+                for (int k = 0; k <= j; k = k > 0 ? -k : 1 - k) {
+                    for (int l = k < j && k > -j ? j : 0; l <= j; l = l > 0 ? -l : 1 - l) {
+                        mutable.set(blockPos, k, i - 1, l);
+                        // Find position within distance that has an uneaten evolving tree, and prevent recurring pathfinding failures
+                        if (blockPos.isWithinDistance(mutable, searchDistance) && (this.world.getBlockState(mutable).getBlock() instanceof EvolutionBlock) &&
+                                (this.world.getBlockState(mutable).get(EvolutionBlock.STAGE) < 6) && mutable != this.treeTarget) {
+                            this.treeTarget = mutable.toImmutable();
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    // Accessor method that allows goals to get updated status of tree target
+    public boolean updateTreeTarget() {
+        // Make sure tree is still there
+        if (this.hasTree && this.world.getBlockState(this.treeTarget).getBlock() instanceof EvolutionBlock && this.world.getBlockState(this.treeTarget).get(EvolutionBlock.STAGE) < 6) {
+            return true;
+        } else {
+            this.hasTree = false;
+            return false;
+        }
+    }
+
+    // Accessor method that allows goals to get tree target
+    public BlockPos getTreeTarget() { return this.treeTarget; }
+
+    //endregion
+    //region LIFE-RELATED METHODS
+
+    // Called on death, currently relatively pointless but could be used for death messages if desired
     public void onDeath(DamageSource source) {
         super.onDeath(source);
         try {
@@ -305,7 +382,7 @@ implements EvolvingSheepAccess {
             this.growUp(200);
         } else {
             lifeTicks += random.nextInt(2);
-            if (lifeTicks > 15) {
+            if (lifeTicks > 40 && !this.hasCustomName()) {
                 this.damage(DamageSourceExt.OLD_AGE, 20F);
             }
         }
@@ -353,13 +430,21 @@ implements EvolvingSheepAccess {
     @Inject(method="mobTick", at = @At("HEAD"))
     public void mobTick(CallbackInfo ci) {
         // Reduce tick frequency by a factor specified in construction to reduce unnecessary load
-        realTick--;
-        if (realTick == 0) {
-            realTick = 100;
+        this.realTick--;
+        if (this.realTick == 0) {
+            this.realTick = 100;
 
             this.feelTemperature();
             this.increaseAge();
             this.checkWolfThreshold((ServerWorld) world);
+            // If sheep is not currently pathfinding and needs to eat more to breed, search for viable tree
+            if (!this.hasTree && this.foodCount < this.breedThreshold) {
+                if (!this.findEvolvingTree(timeSinceEating)) {
+                    timeSinceEating++;
+                } else {
+                    this.hasTree = true;
+                }
+            }
             //System.out.println("post wolf check?");
             System.out.println(this.getWool().getName());
         }
