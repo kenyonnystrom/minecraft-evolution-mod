@@ -14,5 +14,4 @@ public class DamageSourceExt extends DamageSource {
     public static final DamageSource HYPOTHERMIA = (new DamageSourceExt("hypothermia")).setBypassesArmor();
     public static final DamageSource BITE = (new DamageSourceExt("bite"));
     public static final DamageSource OLD_AGE = (new DamageSourceExt("old_age")).setBypassesArmor();
-    public static final DamageSource STARVATION = (new DamageSourceExt("starvation")).setBypassesArmor();
 }

@@ -408,8 +408,9 @@ implements EvolvingSheepAccess {
 
         //check against threshold
         int upperThreshold = 15;
+        int lowerThreshold = 4;
         if (numSheep >= upperThreshold){
-            //spawn a wolf
+            //spawn 2 wolves
             WolfEntity wolfEntity = (WolfEntity)EntityType.WOLF.create(world);
             wolfEntity.refreshPositionAndAngles(this.getX(), this.getY(), this.getZ(), 0.0F, 0.0F);
             world.spawnEntityAndPassengers(wolfEntity);
@@ -417,6 +418,11 @@ implements EvolvingSheepAccess {
             if (world.getGameRules().getBoolean(GameRules.DO_MOB_LOOT)) {
                 world.spawnEntity(new ExperienceOrbEntity(world, this.getX(), this.getY(), this.getZ(), this.getRandom().nextInt(7) + 1));
             }
+            //System.out.println("spawn WOLVES!!!");
+        }
+        else if (numSheep <= lowerThreshold){
+            //despawn any wolves
+            System.out.println("despawn wolves");
         }
     }
 
