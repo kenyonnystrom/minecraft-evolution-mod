@@ -130,6 +130,9 @@ public class AttackSheepGoal extends Goal {
         double difference = 1;
 
         /*
+        This is the part that would need to be reintroduced,
+        which may involve adding more files from the old mod
+
         //this means the wolf encountered a sheep
         if(target instanceof SheepEntity){
             //System.out.println("found an sheep entity");

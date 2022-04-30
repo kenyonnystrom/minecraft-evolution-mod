@@ -8,6 +8,7 @@ package evo.mod.sheep.mixins;
 import evo.mod.blocks.EvolutionBlock;
 import evo.mod.features.ChatExt;
 import evo.mod.features.DamageSourceExt;
+import evo.mod.wolf.WolfAccess;
 
 import evo.mod.sheep.EatTreeGoal;
 import evo.mod.sheep.EvolvingSheepAccess;
@@ -411,12 +412,14 @@ implements EvolvingSheepAccess {
         if (numSheep >= upperThreshold){
             //spawn a wolf
             WolfEntity wolfEntity = (WolfEntity)EntityType.WOLF.create(world);
+            assert wolfEntity != null;
             wolfEntity.refreshPositionAndAngles(this.getX(), this.getY(), this.getZ(), 0.0F, 0.0F);
             world.spawnEntityAndPassengers(wolfEntity);
             world.sendEntityStatus(this, (byte)18);
             if (world.getGameRules().getBoolean(GameRules.DO_MOB_LOOT)) {
                 world.spawnEntity(new ExperienceOrbEntity(world, this.getX(), this.getY(), this.getZ(), this.getRandom().nextInt(7) + 1));
             }
+            ((WolfAccess)wolfEntity).setDespawnBool(true);
         }
     }
 
