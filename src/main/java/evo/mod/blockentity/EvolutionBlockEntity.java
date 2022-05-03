@@ -29,7 +29,7 @@ public class EvolutionBlockEntity extends BlockEntity {
     private int ageProduceSeeds =(int) (4 * r.nextFloat()); //the tree will only attempt to produce new trees when age >= this value, otherwise, all resources will be spent on growth
     private int ageStopGrowing = 4 + (int) (4 * r.nextFloat()); //the tree will only attempt to grow when age >= this value, otherwise, all resources will be spent on growth
     private int height = 0;
-    public static int ticksToEvolve = 2400;
+    public static int ticksToEvolve = 400;
 
 
     //constructor
@@ -47,6 +47,7 @@ public class EvolutionBlockEntity extends BlockEntity {
         tag.putInt("ageProduceSeeds",ageProduceSeeds);
         tag.putInt("ageStopGrowing",ageStopGrowing);
         tag.putInt("height",height);
+        tag.putInt("tickCounter", tickCounter);
         super.writeNbt(tag);
     }
 
@@ -60,6 +61,7 @@ public class EvolutionBlockEntity extends BlockEntity {
         ageProduceSeeds = tag.getInt("ageProduceSeeds");
         ageStopGrowing = tag.getInt("ageStopGrowing");
         height = tag.getInt("height");
+        tickCounter = tag.getInt("tickCounter");
     }
 
     public float get_idealTemp() {return idealTemp;}
@@ -100,10 +102,12 @@ public class EvolutionBlockEntity extends BlockEntity {
     //magic number city
     public float get_Health(){
 
-        float temp_dist = (float) Math.pow(((idealTemp - get_Temp())*10), 2.0F);
-        float moisture_dist = (float) Math.pow(((idealMoisture - get_Moisture())*10), 2.0F);
-        float health = (30 - 3*age - temp_dist - moisture_dist)/10;
+        //float temp_dist = (float) Math.pow(((idealTemp - get_Temp())*10), 2.0F);
+        //float moisture_dist = (float) Math.pow(((idealMoisture - get_Moisture())*10), 2.0F);
+        float temp_dist = (float) Math.abs(idealTemp - get_Temp()) * 8F;
+        float moisture_dist = (float) Math.abs(idealMoisture - get_Moisture())*16F;
         float light = (float) world.getLightLevel(pos.up(height +1));
+        float health = (20 + light - age - temp_dist - moisture_dist)/10;
 
         System.out.printf("health:%f idealTemp:%f Temp:%f temp_dist:%f idealMoisture:%f Moisture:%f moist_dif:%f age:%d light:%f\n", health, idealTemp, get_Temp(), temp_dist, idealMoisture, get_Moisture(),moisture_dist, age, light);
         return health;
@@ -128,7 +132,7 @@ public class EvolutionBlockEntity extends BlockEntity {
         }
         // attempting to control growth simply by cutting num of seeds in half
         //magic number
-        unrounded = unrounded/2;
+        //unrounded = unrounded/2;
         //floor of unrounded value
         int rounded = (int) unrounded;
         //we are rounding probabilistically, if unrounded = 1.4 than 40% of the time rounded = 2, 6-% of the time rounded = 1
@@ -157,12 +161,17 @@ public class EvolutionBlockEntity extends BlockEntity {
         }
         //floor of unrounded value (CASTING TO INT TAKES FLOOR)
         int rounded = (int) unrounded;
-        //we are rounding probabilistically, if unrounded = 1.4 than 40% of the time rounded = 2, 6-% of the time rounded = 1
+        //we are rounding probabilistically, if unrounded = 1.4 than 40% of the time rounded = 2, 60% of the time rounded = 1
         if (unrounded % 1 > random.nextFloat()){
             rounded ++;
         }
         return rounded;
     }
+
+    public String getStatus(){
+        return String.format("Health: %f\nAge: %d\nHeight: %d\nIdeal Temperature: %f\nActual Temperature: %f\nIdeal Moisture: %f\nActual Moisture: %f", get_Health(), age, height, idealTemp, get_Temp(), idealMoisture, get_Moisture());
+    }
+
 
     //based on idealTemp, return appropriate leaf block for TreeGrower to use, darker leaves = more adapted to cold
     public BlockState get_Leaf_Block(){

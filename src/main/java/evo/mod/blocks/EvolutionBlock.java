@@ -19,6 +19,7 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import evo.mod.helpers.TreeGrower;
+import evo.mod.features.ChatExt;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
@@ -73,13 +74,20 @@ public class EvolutionBlock extends BlockWithEntity implements BlockEntityProvid
     */
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+        EvolutionBlockEntity blockEntity = (EvolutionBlockEntity) world.getBlockEntity(pos);
+        ChatExt.sendString(blockEntity.getStatus());
+        /*
         if (!world.isClient) {
             EvolutionBlockEntity blockEntity = (EvolutionBlockEntity) world.getBlockEntity(pos);
             String s =String.valueOf(blockEntity.get_STAGE());
             player.sendMessage(new LiteralText(s), false);
 
         }
+
+         */
         return ActionResult.SUCCESS;
+
+
     }
 
     /*
