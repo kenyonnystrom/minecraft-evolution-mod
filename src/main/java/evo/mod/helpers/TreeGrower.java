@@ -1,7 +1,12 @@
 package evo.mod.helpers;
+import evo.mod.blockentity.EvolutionBlockEntity;
+import evo.mod.features.ChatExt;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.state.property.Properties;
+import net.minecraft.text.LiteralText;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.StructureWorldAccess;
@@ -91,11 +96,12 @@ public class TreeGrower {
     }
 
     public static void kill_Tree(World world, BlockPos pos) {
-        BlockState air = Blocks.AIR.getDefaultState();
-        for (int k=1; k<10;k++) {
+        EvolutionBlockEntity be = (EvolutionBlockEntity) world.getBlockEntity(pos);
+        int height = be.get_height();
+        for (int k=1; k<height+2;k++) {
             for (int j = -1; j < 2; j++) {
                 for (int i = -1; i < 2; i++) {
-                    world.setBlockState(pos.add(i,k,j),air);
+                    world.removeBlock(pos.add(i,k,j),false);
                 }
             }
         }

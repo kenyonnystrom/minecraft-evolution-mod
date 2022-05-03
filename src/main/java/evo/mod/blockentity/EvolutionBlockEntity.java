@@ -1,4 +1,5 @@
 package evo.mod.blockentity;
+import evo.mod.features.ChatExt;
 import evo.mod.helpers.TreeGrower;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -6,8 +7,6 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.BlockPos;
 import evo.mod.evo;
 import net.minecraft.world.World;
@@ -277,6 +276,7 @@ public class EvolutionBlockEntity extends BlockEntity {
     //possibly we could get rid of it earlier and save a bit of memory, but I was paranoid about having a block without an associated entity
     public void die(){
             markRemoved();
+            markDirty();
     }
 
     // remnant of ben experimenting with the block entity getting game ticks so lifecycle would be on more consistent schedule
@@ -285,64 +285,65 @@ public class EvolutionBlockEntity extends BlockEntity {
         be.tickCounter = be.tickCounter + 1;
 
         //number of ticks needed for evolution to occur = could be a minimum amount or a multiple of a number
-        if (be.tickCounter % 100 == 0){
-            //if tree is already dead, delete from world with probability 0.3
-            if (state.get(STAGE)==11){
-                if (r.nextFloat()<0.3F){
+        if (be.tickCounter % 100 == 0) {
+            if (!world.isClient) {
+                //if tree is already dead, delete from world with probability 0.3
+                if (state.get(STAGE) == 11) {
                     //delete block entity
                     be.die();
                     //delete block
                     world.removeBlock(pos, false);
                 }
-            }
 
-            //tree is still alive
-            else {
-                //increment age, age = number of random ticks this tree has received
-                be.increment_Age();
-
-                //get health based on environment and genetics
-                float health = be.get_Health();
-
-                //every random tick there is a chance that the tree dies, greater chance the lower the health
-                //new version intended to add more evolutionary pressure
-                if (health < r.nextGaussian() + 1) {
-                    //tree dies so remove blocks, delete blockEntity, put dead bush blockstate
-                    for (int i = 1; i < be.get_height(); i += 1) {
-                        dropStack(world, pos.add(0, i, 0), new ItemStack(Items.OAK_LOG, 1));
-                        dropStack(world, pos.add(0, i, 0), new ItemStack(Items.STICK, 1));
-                    }
-                    //remove all other blocks of tree
-                    TreeGrower.kill_Tree(world, pos);
-                    //set blockstate to 11, or dead, will be dead sapling and then disappear
-                    world.setBlockState(pos, state.with(STAGE, 11));
-                }
-                //if tree survives
+                //tree is still alive
                 else {
-                    //grow a number of blocks determined by health and age
-                    for(int i = 0; i < be.get_grow_amt(health,r); i++){
-                        //if tree is stripped
-                        if (world.getBlockState(pos).get(STAGE) > 5){
-                            //subtract 5 to return tree to appropriate un-stripped state
-                            //Note: this takes one grow stage so tree cannot grow until it grows back
-                            world.setBlockState(pos, state.with(STAGE, world.getBlockState(pos).get(STAGE)-5));
+                    //increment age, age = number of random ticks this tree has received
+                    be.increment_Age();
+
+                    //get health based on environment and genetics
+                    float health = be.get_Health();
+
+                    //there is a chance that the tree dies, greater chance the lower the health
+                    //new version intended to add more evolutionary pressure
+                    if (health < r.nextGaussian() + 1) {
+                        //drop items
+                        for (int i = 1; i < be.get_height(); i += 1) {
+                            dropStack(world, pos.add(0, i, 0), new ItemStack(Items.OAK_LOG, 1));
+                            dropStack(world, pos.add(0, i, 0), new ItemStack(Items.STICK, 1));
                         }
-                        //if tree is not stripped
-                        else{
-                            //if tree is in sapling stage
-                            if (state.get(STAGE) == 0){
-                                //change it to be in the appropriate stage (1-5) depending on idealMoisture, this will affect its wood type
-                                world.setBlockState(pos, state.with(STAGE, be.get_STAGE()));
-                            }
-                            grow_Tree(world,pos, be);
-                        }
+                        //remove all other blocks of tree
+                        TreeGrower.kill_Tree(world, pos);
+                        //set blockstate to 11, or dead, will be dead sapling and then disappear
+                        world.setBlockState(pos, state.with(STAGE, 11));
+
                     }
-                    //attempt to produce offspring a number of times determined by health and age
-                    for(int i = 0; i < be.get_num_seeds(health, r);i++){
-                        cloneTree(world, pos, r, be.get_height(), be);
+                    else {
+                        //grow a number of blocks determined by health and age
+                        for(int i = 0; i < be.get_grow_amt(health,r); i++){
+                            //if tree is stripped
+                            if (world.getBlockState(pos).get(STAGE) > 5){
+                                //subtract 5 to return tree to appropriate un-stripped state
+                                //Note: this takes one grow stage so tree cannot grow until it grows back
+                                world.setBlockState(pos, state.with(STAGE, world.getBlockState(pos).get(STAGE)-5));
+                            }
+                            //if tree is not stripped
+                            else{
+                                //if tree is in sapling stage
+                                if (state.get(STAGE) == 0){
+                                    //change it to be in the appropriate stage (1-5) depending on idealMoisture, this will affect its wood type
+                                    world.setBlockState(pos, state.with(STAGE, be.get_STAGE()));
+                                }
+                                grow_Tree(world,pos, be);
+                            }
+                        }
+                        //attempt to produce offspring a number of times determined by health and age
+                        for(int i = 0; i < be.get_num_seeds(health, r);i++){
+                            cloneTree(world, pos, r, be.get_height(), be);
+                        }
                     }
                 }
             }
+            be.tickCounter = 0;
         }
     }
 
@@ -380,8 +381,9 @@ public class EvolutionBlockEntity extends BlockEntity {
         //Add height to position of block to get top of trunk
         //curr_height = height of tree trunk
         int curr_height = be.get_height();
-
-        TreeGrower.grow_Trunk(world, pos, curr_height, be.get_Wood_Block());
-        TreeGrower.grow_Leaves(world, pos, curr_height, be.get_Leaf_Block());
+        if (world.getBlockState(pos).get(STAGE) != 11) {
+            TreeGrower.grow_Trunk(world, pos, curr_height, be.get_Wood_Block());
+            TreeGrower.grow_Leaves(world, pos, curr_height, be.get_Leaf_Block());
+        }
     }
 }

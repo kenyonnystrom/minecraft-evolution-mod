@@ -15,7 +15,7 @@ public class TreeManager {
 
     /**
      * @author = Ben Santos
-     * @reason = removing trees from this biome
+     * @reason = removing trees from this biome, adding our custom trees
      */
     @Overwrite()
     public static void addSavannaTrees(GenerationSettings.Builder builder) {
@@ -26,6 +26,7 @@ public class TreeManager {
     }
     /**
      * @author = Ben Santos
+     * @reason = removing trees from this biome, adding our custom trees
      */
     @Overwrite()
     public static void addBirchTrees(GenerationSettings.Builder builder) {
@@ -34,6 +35,7 @@ public class TreeManager {
 
     /**
      * @author = Ben Santos
+     * @reason = removing trees from this biome, adding our custom trees
      */
     @Overwrite()
     public static void addTaigaTrees(GenerationSettings.Builder builder) {
@@ -42,6 +44,7 @@ public class TreeManager {
 
     /**
      * @author = Ben Santos
+     * @reason = removing trees from this biome, adding our custom trees
      */
     @Overwrite()
     public static void addGroveTrees(GenerationSettings.Builder builder) {
@@ -50,6 +53,7 @@ public class TreeManager {
 
     /**
      * @author = Ben Santos
+     * @reason = removing trees from this biome, adding our custom trees
      */
     @Overwrite()
     public static void addWaterBiomeOakTrees(GenerationSettings.Builder builder) {
@@ -58,6 +62,7 @@ public class TreeManager {
 
     /**
      * @author = Ben Santos
+     * @reason = removing trees from this biome, adding our custom trees
      */
     @Overwrite()
     public static void addForestTrees(GenerationSettings.Builder builder) {
@@ -66,6 +71,7 @@ public class TreeManager {
 
     /**
      * @author = Ben Santos
+     * @reason = removing trees from this biome, adding our custom trees
      */
     @Overwrite()
     public static void addTallBirchTrees(GenerationSettings.Builder builder) {
@@ -74,6 +80,7 @@ public class TreeManager {
 
     /**
      * @author = Ben Santos
+     * @reason = removing trees from this biome, adding our custom trees
      */
     @Overwrite
     public static void addExtraSavannaTrees(GenerationSettings.Builder builder) {
@@ -82,6 +89,7 @@ public class TreeManager {
 
     /**
      * @author = Ben Santos
+     * @reason = removing trees from this biome, adding our custom trees
      */
     @Overwrite
     public static void addWindsweptHillsTrees(GenerationSettings.Builder builder) {
@@ -90,6 +98,7 @@ public class TreeManager {
 
     /**
      * @author = Ben Santos
+     * @reason = removing trees from this biome, adding our custom trees
      */
     @Overwrite
     public static void addWindsweptForestTrees(GenerationSettings.Builder builder) {
@@ -98,6 +107,7 @@ public class TreeManager {
 
     /**
      * @author = Ben Santos
+     * @reason = removing trees from this biome, adding our custom trees
      */
     @Overwrite
     public static void addJungleTrees(GenerationSettings.Builder builder) {
@@ -106,6 +116,7 @@ public class TreeManager {
 
     /**
      * @author = Ben Santos
+     * @reason = removing trees from this biome, adding our custom trees
      */
     @Overwrite
     public static void addSparseJungleTrees(GenerationSettings.Builder builder) {
@@ -114,6 +125,7 @@ public class TreeManager {
 
     /**
      * @author = Ben Santos
+     * @reason = removing trees from this biome, adding our custom trees
      */
     @Overwrite
     public static void addBadlandsPlateauTrees(GenerationSettings.Builder builder) {
@@ -122,6 +134,7 @@ public class TreeManager {
 
     /**
      * @author = Ben Santos
+     * @reason = removing trees from this biome, adding our custom trees
      */
     @Overwrite
     public static void addSnowySpruceTrees(GenerationSettings.Builder builder) {
@@ -130,6 +143,7 @@ public class TreeManager {
 
     /**
      * @author = Ben Santos
+     * @reason = removing trees from this biome, adding our custom trees
      */
     @Overwrite
     public static void addPlainsFeatures(GenerationSettings.Builder builder) {
@@ -140,6 +154,7 @@ public class TreeManager {
 
     /**
      * @author = Ben Santos
+     * @reason = removing trees from this biome, adding our custom trees
      */
     @Overwrite
     public static void addMeadowFlowers(GenerationSettings.Builder builder) {

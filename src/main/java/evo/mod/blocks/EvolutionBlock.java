@@ -74,16 +74,8 @@ public class EvolutionBlock extends BlockWithEntity implements BlockEntityProvid
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         if (!world.isClient) {
-            //grow_Tree(world,pos);
-            int stage = state.get(STAGE);
-            if (stage >= 1 && stage <=5){
-                world.setBlockState(pos, state.with(STAGE, stage + 5));
-            }
-            //world.setBlockState(pos, state.with(STAGE, state.get(STAGE)+1));
-            //System.out.println(world.getBlockState(pos));
-            //world.setBlockState(pos, state.with(AGE, world.getBlockState(pos).get(AGE)+1));
             EvolutionBlockEntity blockEntity = (EvolutionBlockEntity) world.getBlockEntity(pos);
-            String s =String.valueOf(blockEntity.get_Age());
+            String s =String.valueOf(blockEntity.get_STAGE());
             player.sendMessage(new LiteralText(s), false);
 
         }
@@ -159,7 +151,7 @@ public class EvolutionBlock extends BlockWithEntity implements BlockEntityProvid
             }
         }
     }
-
+    
     /*
     Clones EvolutionBlock at provided position to a nearby location
     Copies parent's genome - modifies it by specific updateGeneName BlockEntity methods
@@ -189,7 +181,6 @@ public class EvolutionBlock extends BlockWithEntity implements BlockEntityProvid
             EvolutionBlockEntity blockEntity = (EvolutionBlockEntity) world.getBlockEntity(newTreePos);
             blockEntity.copyValues(parent);
             blockEntity.mutate();
-            //blockEntity.update_IdealTemp(0.8F + (random.nextFloat() * 0.4F));
         }
     }
 
