@@ -151,7 +151,7 @@ public class EvolutionBlock extends BlockWithEntity implements BlockEntityProvid
             }
         }
     }
-    
+
     /*
     Clones EvolutionBlock at provided position to a nearby location
     Copies parent's genome - modifies it by specific updateGeneName BlockEntity methods

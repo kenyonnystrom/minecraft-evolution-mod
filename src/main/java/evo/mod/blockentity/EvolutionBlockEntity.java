@@ -20,8 +20,8 @@ import java.util.Random;
 public class EvolutionBlockEntity extends BlockEntity {
 
     //data to store
-    public int tickCounter = 0;
     static Random r = new Random();
+    public int tickCounter = r.nextInt(1600);
     private float idealTemp = -0.7F + (r.nextFloat() * 2.7F); //health gets worse the farther actual temp it is from this value
     private float idealMoisture = r.nextFloat(); // same as above but for water (we will have to generate value for water)
     private float growthPercent = r.nextFloat(); //at times when tree is doing both growing and reproducing, what percent of health is spent on growth
@@ -29,6 +29,7 @@ public class EvolutionBlockEntity extends BlockEntity {
     private int ageProduceSeeds =(int) (4 * r.nextFloat()); //the tree will only attempt to produce new trees when age >= this value, otherwise, all resources will be spent on growth
     private int ageStopGrowing = 4 + (int) (4 * r.nextFloat()); //the tree will only attempt to grow when age >= this value, otherwise, all resources will be spent on growth
     private int height = 0;
+    public static int ticksToEvolve = 2400;
 
 
     //constructor
@@ -67,15 +68,11 @@ public class EvolutionBlockEntity extends BlockEntity {
 
     public float get_growthPercent() {return growthPercent;}
 
-    public int get_Age() {return age;}
-
     public int get_ageProduceSeeds() {return ageProduceSeeds;}
 
     public int get_ageStopGrowing() {return ageStopGrowing;}
 
     public int get_height() {return height;}
-
-    public int get_tickCounter() {return tickCounter;}
 
     public void increment_Height(){
         height = height + 1;
@@ -84,11 +81,6 @@ public class EvolutionBlockEntity extends BlockEntity {
 
     public void increment_Age(){
         age = age + 1;
-        markDirty();
-    }
-
-    public void increment_tickCounter(){
-        tickCounter = tickCounter + 1;
         markDirty();
     }
 
@@ -218,7 +210,7 @@ public class EvolutionBlockEntity extends BlockEntity {
 
     //same as above but for changing blockstate of base block rather than b locks of trunk
     //unlike get_Leaf_Block() and get_Wood_Block(), should only be called once when tree first grows from sapling
-    public Integer get_STAGE(){
+    public int get_STAGE(){
         if (idealMoisture < 0.1F){
             return 1;
         }
@@ -285,10 +277,10 @@ public class EvolutionBlockEntity extends BlockEntity {
         be.tickCounter = be.tickCounter + 1;
 
         //number of ticks needed for evolution to occur = could be a minimum amount or a multiple of a number
-        if (be.tickCounter % 100 == 0) {
+        if (be.tickCounter >= ticksToEvolve) {
             if (!world.isClient) {
                 //if tree is already dead, delete from world with probability 0.3
-                if (state.get(STAGE) == 11) {
+                if (state.get(STAGE) == 11 && r.nextFloat()<0.3F) {
                     //delete block entity
                     be.die();
                     //delete block
@@ -381,9 +373,7 @@ public class EvolutionBlockEntity extends BlockEntity {
         //Add height to position of block to get top of trunk
         //curr_height = height of tree trunk
         int curr_height = be.get_height();
-        if (world.getBlockState(pos).get(STAGE) != 11) {
-            TreeGrower.grow_Trunk(world, pos, curr_height, be.get_Wood_Block());
-            TreeGrower.grow_Leaves(world, pos, curr_height, be.get_Leaf_Block());
-        }
+        TreeGrower.grow_Trunk(world, pos, curr_height, be.get_Wood_Block());
+        TreeGrower.grow_Leaves(world, pos, curr_height, be.get_Leaf_Block());
     }
 }
