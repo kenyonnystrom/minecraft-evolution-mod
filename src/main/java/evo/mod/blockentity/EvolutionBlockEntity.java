@@ -29,7 +29,7 @@ public class EvolutionBlockEntity extends BlockEntity {
     private int ageProduceSeeds =(int) (4 * r.nextFloat()); //the tree will only attempt to produce new trees when age >= this value, otherwise, all resources will be spent on growth
     private int ageStopGrowing = 4 + (int) (4 * r.nextFloat()); //the tree will only attempt to grow when age >= this value, otherwise, all resources will be spent on growth
     private int height = 0;
-    public static int ticksToEvolve = 400;
+    public static int ticksToEvolve = 2400;
 
 
     //constructor
