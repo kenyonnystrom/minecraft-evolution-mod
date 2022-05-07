@@ -174,7 +174,7 @@ public class EvolutionBlockEntity extends BlockEntity {
     }
 
     public String getStatus(){
-        return String.format("Health: %f\nAge: %d\nHeight: %d\nIdeal Temperature: %f\nActual Temperature: %f\nIdeal Moisture: %f\nActual Moisture: %f", get_Health(), age, height, idealTemp, get_Temp(), idealMoisture, get_Moisture());
+        return String.format("Health: %f\nAge: %d\nHeight: %d\nIdeal Temperature: %f\nActual Temperature: %f\nIdeal Moisture: %f\nActual Moisture: %f\n\n\n", get_Health(), age, height, idealTemp, get_Temp(), idealMoisture, get_Moisture());
     }
 
 
