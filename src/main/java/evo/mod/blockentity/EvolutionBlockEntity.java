@@ -7,10 +7,15 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.tag.BlockTags;
+import net.minecraft.tag.Tag;
 import net.minecraft.util.math.BlockPos;
 import evo.mod.evo;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
+
+import javax.swing.text.html.HTML;
+
 import static evo.mod.blocks.EvolutionBlock.STAGE;
 import static net.minecraft.block.Block.dropStack;
 import static net.minecraft.block.LeavesBlock.PERSISTENT;
@@ -104,10 +109,10 @@ public class EvolutionBlockEntity extends BlockEntity {
 
         //float temp_dist = (float) Math.pow(((idealTemp - get_Temp())*10), 2.0F);
         //float moisture_dist = (float) Math.pow(((idealMoisture - get_Moisture())*10), 2.0F);
-        float temp_dist = (float) Math.abs(idealTemp - get_Temp()) * 8F;
-        float moisture_dist = (float) Math.abs(idealMoisture - get_Moisture())*16F;
+        float temp_dist = (float) Math.abs(idealTemp - get_Temp()) * 12F;
+        float moisture_dist = (float) Math.abs(idealMoisture - get_Moisture())*22F;
         float light = (float) world.getLightLevel(pos.up(height +1));
-        float health = (20 + light - age - temp_dist - moisture_dist)/10;
+        float health = (20 + light - 3*age - temp_dist - moisture_dist)/10;
 
         System.out.printf("health:%f idealTemp:%f Temp:%f temp_dist:%f idealMoisture:%f Moisture:%f moist_dif:%f age:%d light:%f\n", health, idealTemp, get_Temp(), temp_dist, idealMoisture, get_Moisture(),moisture_dist, age, light);
         return health;
@@ -132,7 +137,7 @@ public class EvolutionBlockEntity extends BlockEntity {
         }
         // attempting to control growth simply by cutting num of seeds in half
         //magic number
-        //unrounded = unrounded/2;
+        unrounded = unrounded/2;
         //floor of unrounded value
         int rounded = (int) unrounded;
         //we are rounding probabilistically, if unrounded = 1.4 than 40% of the time rounded = 2, 6-% of the time rounded = 1
@@ -355,12 +360,21 @@ public class EvolutionBlockEntity extends BlockEntity {
         int status = 0;
         while (status < 2){
             BlockState blockState = world.getBlockState(checkPos);
-            if (blockState.isAir()){
+            if ((blockState.isAir()) || (blockState.isOf(Blocks.SNOW))) {
                 status = 1;
                 checkPos = checkPos.down();
             }
             else if ((status == 1) && (blockState.isOf(Blocks.FARMLAND) || blockState.isOf(Blocks.DIRT) || blockState.isOf(Blocks.COARSE_DIRT) || blockState.isOf(Blocks.PODZOL) || blockState.isOf(Blocks.GRASS_BLOCK) || blockState.isOf(Blocks.SAND) || blockState.isOf(Blocks.SNOW_BLOCK))){
                 status = 2;
+                for (int i = -2; i < 3; i ++){
+                    for (int j = -2; j < 3; j ++){
+                        BlockPos checkTree = checkPos.add(i,1,j);
+                        BlockState checkTreeState = world.getBlockState(checkTree);
+                        if (checkTreeState.isIn(BlockTags.LOGS) || checkTreeState.isOf(evo.EVOLUTION_BLOCK)){
+                            status = 4;
+                        }
+                    }
+                }
             }
             else{
                 status = 3;
@@ -374,6 +388,14 @@ public class EvolutionBlockEntity extends BlockEntity {
             blockEntity.copyValues(be);
             blockEntity.mutate();
         }
+        /*
+        for debugging/demonstration, place red concrete block when tree fails to place
+        if (status > 2){
+            BlockPos newTreePos = checkPos.up();
+            world.setBlockState(newTreePos, Blocks.RED_CONCRETE.getDefaultState());
+        }
+
+         */
     }
 
     public static void grow_Tree(World world, BlockPos pos, EvolutionBlockEntity be) {

@@ -77,6 +77,8 @@ public class EvolutionBlock extends BlockWithEntity implements BlockEntityProvid
         EvolutionBlockEntity blockEntity = (EvolutionBlockEntity) world.getBlockEntity(pos);
         ChatExt.sendString(blockEntity.getStatus());
         /*
+        Random r = new Random();
+        blockEntity.cloneTree(world, pos, r, 4,blockEntity);
         if (!world.isClient) {
             EvolutionBlockEntity blockEntity = (EvolutionBlockEntity) world.getBlockEntity(pos);
             String s =String.valueOf(blockEntity.get_STAGE());
