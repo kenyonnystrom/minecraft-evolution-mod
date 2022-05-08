@@ -63,7 +63,6 @@ public class EvolutionBlock extends BlockWithEntity implements BlockEntityProvid
      */
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        //builder.add(AGE);
         //builder.add(GROWN);
         builder.add(STAGE);
     }

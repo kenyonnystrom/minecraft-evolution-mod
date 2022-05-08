@@ -294,11 +294,13 @@ public class EvolutionBlockEntity extends BlockEntity {
         if (be.tickCounter >= ticksToEvolve) {
             if (!world.isClient) {
                 //if tree is already dead, delete from world with probability 0.3
-                if (state.get(STAGE) == 11 && r.nextFloat()<0.3F) {
-                    //delete block entity
-                    be.die();
-                    //delete block
-                    world.removeBlock(pos, false);
+                if (state.get(STAGE) == 11) {
+                    if (r.nextFloat()<0.3F) {
+                        //delete block entity
+                        be.die();
+                        //delete block
+                        world.removeBlock(pos, false);
+                    }
                 }
 
                 //tree is still alive
