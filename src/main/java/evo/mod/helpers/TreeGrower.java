@@ -1,14 +1,8 @@
 package evo.mod.helpers;
 import evo.mod.blockentity.EvolutionBlockEntity;
-import evo.mod.features.ChatExt;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.state.property.Properties;
-import net.minecraft.text.LiteralText;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
 import net.minecraft.world.StructureWorldAccess;
 import net.minecraft.world.World;
 
@@ -20,13 +14,6 @@ public class TreeGrower {
     }
 
     public static void generate_Trunk(StructureWorldAccess world, BlockPos pos, int height, BlockState wood_block){
-        //can add max height here if needed
-//        for(int i=0; i <= final_height; i++){
-//            BlockPos wood_pos = pos.add(0, i, 0);
-//            world.setBlockState(wood_pos, wood_block,2);
-//        }
-        //can add max height here if needed
-
         BlockPos wood_pos = pos.add(0, height, 0);
         world.setBlockState(wood_pos, wood_block,2);
 

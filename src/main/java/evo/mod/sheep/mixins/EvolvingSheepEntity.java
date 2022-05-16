@@ -367,7 +367,7 @@ implements EvolvingSheepAccess {
         try {
             DamageSourceExt s = (DamageSourceExt) source;
             // Uncomment the following line if you want sheep death messages
-            ChatExt.sendText(s.getDeathMessage(this));
+            //ChatExt.sendText(s.getDeathMessage(this));
         } catch (Exception e){
             // Don't print anything
         }
