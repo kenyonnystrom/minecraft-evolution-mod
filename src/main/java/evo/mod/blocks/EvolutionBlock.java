@@ -12,7 +12,6 @@ import net.minecraft.item.Items;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.IntProperty;
-import net.minecraft.text.LiteralText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
@@ -20,8 +19,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import evo.mod.helpers.TreeGrower;
 import evo.mod.features.ChatExt;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.Random;
 
 
@@ -52,7 +49,6 @@ public class EvolutionBlock extends BlockWithEntity implements BlockEntityProvid
         //The actual parameters given to super() are used to initialize the inherited instance variables
         super(settings);
         //EvolutionBlock is a sapling by default
-        //setDefaultState(getStateManager().getDefaultState().with(GROWN, false));
         setDefaultState(getStateManager().getDefaultState().with(STAGE, 0));
     }
 
@@ -62,9 +58,7 @@ public class EvolutionBlock extends BlockWithEntity implements BlockEntityProvid
     We register this property of the EvolutionBlock by overriding appendProperties, and then add the GROWN property
      */
     @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        //builder.add(GROWN);
-        builder.add(STAGE);
+    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {builder.add(STAGE);
     }
 
     /*
@@ -75,17 +69,6 @@ public class EvolutionBlock extends BlockWithEntity implements BlockEntityProvid
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         EvolutionBlockEntity blockEntity = (EvolutionBlockEntity) world.getBlockEntity(pos);
         ChatExt.sendString(blockEntity.getStatus());
-        /*
-        Random r = new Random();
-        blockEntity.cloneTree(world, pos, r, 4,blockEntity);
-        if (!world.isClient) {
-            EvolutionBlockEntity blockEntity = (EvolutionBlockEntity) world.getBlockEntity(pos);
-            String s =String.valueOf(blockEntity.get_STAGE());
-            player.sendMessage(new LiteralText(s), false);
-
-        }
-
-         */
         return ActionResult.SUCCESS;
 
 
@@ -119,9 +102,6 @@ public class EvolutionBlock extends BlockWithEntity implements BlockEntityProvid
             float health = blockEntity.get_Health();
 
             //every random tick there is a chance that the tree dies, greater chance the lower the health
-            //old verion
-            //if (health < random.nextFloat()){
-            //new version intended to add more evolutionary pressure
             if (health < random.nextGaussian()+1){
                 //tree dies so remove blocks, delete blockEntity, put dead bush blockstate
                 for (int i=1; i<blockEntity.get_height(); i+=1){

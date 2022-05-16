@@ -1,5 +1,4 @@
 package evo.mod.blockentity;
-import evo.mod.features.ChatExt;
 import evo.mod.helpers.TreeGrower;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -8,18 +7,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.tag.BlockTags;
-import net.minecraft.tag.Tag;
 import net.minecraft.util.math.BlockPos;
 import evo.mod.evo;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
-
-import javax.swing.text.html.HTML;
-
 import static evo.mod.blocks.EvolutionBlock.STAGE;
 import static net.minecraft.block.Block.dropStack;
 import static net.minecraft.block.LeavesBlock.PERSISTENT;
-
 import java.util.Random;
 
 public class EvolutionBlockEntity extends BlockEntity {
@@ -106,9 +100,6 @@ public class EvolutionBlockEntity extends BlockEntity {
     // Health has max of 3, decreases when tree is older, and temp and moisture levels are more different from ideal, when light is low, and when bark is stripped
     //magic number city
     public float get_Health(){
-
-        //float temp_dist = (float) Math.pow(((idealTemp - get_Temp())*10), 2.0F);
-        //float moisture_dist = (float) Math.pow(((idealMoisture - get_Moisture())*10), 2.0F);
         float temp_dist = (float) Math.abs(idealTemp - get_Temp()) * 12F;
         float moisture_dist = (float) Math.abs(idealMoisture - get_Moisture())*22F;
         float light = (float) world.getLightLevel(pos.up(height +1));
@@ -284,7 +275,6 @@ public class EvolutionBlockEntity extends BlockEntity {
             markDirty();
     }
 
-    // remnant of ben experimenting with the block entity getting game ticks so lifecycle would be on more consistent schedule
     public static void tick(World world, BlockPos pos, BlockState state, EvolutionBlockEntity be) {
         //increment tickCounter
         be.tickCounter = be.tickCounter + 1;
