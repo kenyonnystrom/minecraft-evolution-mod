@@ -161,7 +161,6 @@ implements EvolvingSheepAccess {
     // Get temperature, and take damage based on this sheep's wool type
     private void feelTemperature() {
         float currTemp = this.getTemp();
-        System.out.printf("Temp: %f%n", currTemp);
         switch(this.getWool()) {
             case NO_WOOL:
                 if (currTemp < 65F) {
@@ -241,7 +240,6 @@ implements EvolvingSheepAccess {
             int diff = pAW - pBW;
             int kW;
             int i = random.nextInt(10);
-            System.out.printf(" PARENT A: %d%n PARENT B: %d%n I: %d%n", pAW, pBW, i);
             if (i > 0){
                 if (diff == 0) {
                     // If parents same, inherit same
@@ -295,7 +293,6 @@ implements EvolvingSheepAccess {
     // When sheep eats anything, check food count for breeding threshold or reset
     private void onEating() {
         this.foodCount++;
-        System.out.println(this.foodCount);
         // If sheep has eaten enough food, go into love mode
         if (this.foodCount == this.breedThreshold) {
             if (!this.world.isClient) {
@@ -370,7 +367,7 @@ implements EvolvingSheepAccess {
         try {
             DamageSourceExt s = (DamageSourceExt) source;
             // Uncomment the following line if you want sheep death messages
-            // ChatExt.sendText(s.getDeathMessage(this));
+            ChatExt.sendText(s.getDeathMessage(this));
         } catch (Exception e){
             // Don't print anything
         }
@@ -392,7 +389,6 @@ implements EvolvingSheepAccess {
     // Called when sheep age (on tick), determines if wolves should spawn or not
     // Could be changed to work off of chunk tick instead
     private void checkWolfThreshold(ServerWorld world) {
-        System.out.println("in wolf check");
         // create box around sheep to check
         BlockPos pos = super.getBlockPos();
         int sheepX = pos.getX();
@@ -405,7 +401,6 @@ implements EvolvingSheepAccess {
 
         //get length of list
         int numSheep = listOfEnts.size();
-        System.out.printf("number of sheep: %d",  numSheep);
 
         //check against threshold
         int upperThreshold = 15;
@@ -442,8 +437,6 @@ implements EvolvingSheepAccess {
                     this.hasTree = true;
                 }
             }
-            //System.out.println("post wolf check?");
-            System.out.println(this.getWool().getName());
         }
     }
     //endregion

@@ -114,7 +114,6 @@ public class EvolutionBlockEntity extends BlockEntity {
         float light = (float) world.getLightLevel(pos.up(height +1));
         float health = (20 + light - 3*age - temp_dist - moisture_dist)/10;
 
-        System.out.printf("health:%f idealTemp:%f Temp:%f temp_dist:%f idealMoisture:%f Moisture:%f moist_dif:%f age:%d light:%f\n", health, idealTemp, get_Temp(), temp_dist, idealMoisture, get_Moisture(),moisture_dist, age, light);
         return health;
     }
 

@@ -205,7 +205,6 @@ public class EvolutionBlock extends BlockWithEntity implements BlockEntityProvid
         //Add height to position of block to get top of trunk
         //curr_height = height of tree trunk
         int curr_height = blockEntity.get_height();
-        //System.out.println(curr_height);
 
         TreeGrower.grow_Trunk(world, pos, curr_height, blockEntity.get_Wood_Block());
         TreeGrower.grow_Leaves(world, pos, curr_height, blockEntity.get_Leaf_Block());
