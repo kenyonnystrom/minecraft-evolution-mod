@@ -1,3 +1,8 @@
+//
+// This mixin edits WolfEntity to allow it to despawn if too few sheep are in a given area
+//
+
+
 package evo.mod.wolf.mixins;
 
 import evo.mod.features.DamageSourceExt;
