@@ -1,0 +1,13 @@
+{
+  "block.evo.evolution_block": "Evolution Sapling",
+
+  "entity.minecraft.sheep.no_wool": "Wool-less Sheep",
+  "entity.minecraft.sheep.thin_wool": "Thin-Wool Sheep",
+  "entity.minecraft.sheep.standard_wool": "Standard Sheep",
+  "entity.minecraft.sheep.thick_wool": "Thick-Wool Sheep",
+
+  "death.attack.heatstroke": "%1$s's brain melted due to heatstroke",
+  "death.attack.hypothermia": "%1$s froze due to severe hypothermia",
+  "death.attack.bite": "%1$s was mauled",
+  "death.attack.old_age": "%1$s enjoyed a long, happy life and drew a final breath among close friends and family"
+}

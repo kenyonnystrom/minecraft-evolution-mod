@@ -1,0 +1,16 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "evo.mod.rendering.mixins",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+  ],
+  "client": [
+    "SheepWoolRenderer",
+    "ModelLayerAccess",
+    "EntityModelsExt"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
