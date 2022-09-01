@@ -1,10 +1,10 @@
 # An Adaptive Landscape: Modeling Evolution in Minecraft
-This mod endeavors to bring evolution to the hit game Minecraft, specifically introducing various adaptive
-characteristics to sheep and trees. This is a fork of the [original page](https://github.com/anyaevostinar/minecraft-sheep-evolution) for the purpose of showcasing
-my contributions. You can learn more about the sheep-related code, of which I was the principal author,
-in the [original wiki](https://github.com/anyaevostinar/minecraft-sheep-evolution/wiki/Sheep-Overview) (which is incomplete outside of my pages).
+This mod endeavors to bring evolution to the hit game Minecraft, specifically introducing various adaptive characteristics to sheep and trees. This is a fork of the [original page](https://github.com/anyaevostinar/minecraft-sheep-evolution) for the purpose of showcasing my contributions. You can learn more about the sheep-related code, of which I was the principal author, in the [original wiki](https://github.com/anyaevostinar/minecraft-sheep-evolution/wiki/Sheep-Overview) (which is incomplete outside of my pages).
 
-Lots of credit to Anya Vostinar and all my teammates!
+Here is a list of files which were principally or entirely written by me, ordered by conceptual complexity:\
+\[[EvolvingSheepEntity](https://github.com/kenyonnystrom/minecraft-evolution-mod/blob/master/src/main/java/evo/mod/sheep/mixins/EvolvingSheepEntity.java), [EntityModelsExt](https://github.com/kenyonnystrom/minecraft-evolution-mod/blob/master/src/main/java/evo/mod/rendering/mixins/EntityModelsExt.java), [EatTreeGoal](https://github.com/kenyonnystrom/minecraft-evolution-mod/blob/master/src/main/java/evo/mod/sheep/EatTreeGoal.java), [SheepWoolRenderer](https://github.com/kenyonnystrom/minecraft-evolution-mod/blob/master/src/main/java/evo/mod/rendering/mixins/SheepWoolRenderer.java), [ModelLayerAccess](https://github.com/kenyonnystrom/minecraft-evolution-mod/blob/master/src/main/java/evo/mod/rendering/mixins/ModelLayerAccess.java), [EvolvingSheepAccess](https://github.com/kenyonnystrom/minecraft-evolution-mod/blob/master/src/main/java/evo/mod/sheep/EvolvingSheepAccess.java), [SheepThickWoolEntityModel](https://github.com/kenyonnystrom/minecraft-evolution-mod/blob/master/src/main/java/evo/mod/rendering/SheepThickWoolEntityModel.java), [WoolType](https://github.com/kenyonnystrom/minecraft-evolution-mod/blob/master/src/main/java/evo/mod/features/WoolType.java), [ChatExt](https://github.com/kenyonnystrom/minecraft-evolution-mod/blob/master/src/main/java/evo/mod/features/ChatExt.java), [EntityModelLayersExt](https://github.com/kenyonnystrom/minecraft-evolution-mod/blob/master/src/main/java/evo/mod/rendering/EntityModelLayersExt.java), [DamageSourceExt](https://github.com/kenyonnystrom/minecraft-evolution-mod/blob/master/src/main/java/evo/mod/features/DamageSourceExt.java)\]
+
+Lots of credit to advisor Anya Vostinar and all my teammates!
 
 ![models](images/models.gif)
 ![combo](images/combo.gif)
