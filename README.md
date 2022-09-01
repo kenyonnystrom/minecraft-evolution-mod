@@ -5,4 +5,6 @@ my contributions. You can learn more about the sheep-related code, of which I wa
 in the [original wiki](https://github.com/anyaevostinar/minecraft-sheep-evolution/wiki/Sheep-Overview) (which is incomplete outside of my pages).
 
 Lots of credit to Anya Vostinar and all my teammates!
-![showcase](images/showcase.png)
+
+![models](images/models.gif)
+![combo](images/combo.gif)
